@@ -1,55 +1,55 @@
 
-// const ALLOWED_USERS = [
-//   "sinharacreations@gmail.com",
+const ALLOWED_USERS = [
+  "sinharacreations@gmail.com",
 //   "vijinvv125@gmail.com",
-//   "dayanandanaap@gmail.com"
-// ];
+  "dayanandanaap@gmail.com"
+];
 
-// function validateUser(email) {
-//   console.log("email:", email);
 
-//   if (!ALLOWED_USERS.includes(email)) {
-//     throw new Error("Access denied for " + email);
-//   }
+function parseJwt(token) {
 
-//   return true;
-// }
+    return JSON.parse(
+        atob(
+            token.split(".")[1]
+        )
+    );
+}
 
-// function handleCredentialResponse(response) {
-//   const payload =
-//     JSON.parse(atob(response.credential.split('.')[1]));
+function handleCredentialResponse(response) {
 
-//   const email = payload.email;
+    const payload =
+        parseJwt(
+            response.credential
+        );
 
-//   console.log("Signed in:", email);
+    console.log(payload);
 
-//   try {
-//     validateUser(email);
 
-//     localStorage.setItem(
-//       "user_email",
-//       email
-//     );
+    if (
+        ALLOWED_USERS.includes(
+            payload.email
+        )
+    ) {
 
-//     onValidated(email);
-//   } catch (error) {
-//     onValidationFailed(error);
-//   }
-// }
+        localStorage.setItem(
+    "google_token",
+    response.credential
+);
+        document
+            .getElementById("loginScreen")
+            .style.display = "none";
 
-// function onValidated(email) {
-//   console.log("Access granted:", email);
+        document
+            .getElementById("appScreen")
+            .style.display = "block";
 
-//   // Load app here
+    } else {
 
-// }
-
-// function onValidationFailed(error) {
-//   alert(error.message);
-
-//   document.body.innerHTML =
-//     "<h2>Access Denied</h2>";
-// }
+        alert(
+            "Access denied"
+        );
+    }
+}
 
 window.onload = function () {
     switchTab('home');

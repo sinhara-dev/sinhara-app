@@ -6,15 +6,17 @@
 <head>
     <link rel="icon" href="assets/icons/favicon.png">
     <link rel="manifest" href="manifest.json">
-    
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Force full-screen mode for Apple iOS Safari -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Sinhara Admin">
+    <meta name="apple-mobile-web-app-title" content="Sinhara">
 
     <!-- Force full-screen mode for Android Chrome -->
     <meta name="mobile-web-app-capable" content="yes">
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
         html {
@@ -999,275 +1001,290 @@
 
     <div id="statusMessage"></div>
 
-    <!-- Bottom Tab Bar -->
-    <div class="bottom-tab-bar">
-        <div class="tab active" onclick="switchTab('home')">
-            Dashboard
+    <div id="loginScreen">
+
+        <div 
+            id="g_id_onload" 
+            data-client_id="382055113607-tsn501fgtlisnflhf7ldeg87mh8f32n5.apps.googleusercontent.com" 
+            data-callback="handleCredentialResponse">
         </div>
 
-        <div class="tab" onclick="switchTab('products')">
-            Inventory
-        </div>
-
-        <div class="tab" onclick="switchTab('expenses')">
-            Expenses
-        </div>
-
-        <div class="tab" onclick="switchTab('sales')">
-            Sales
-        </div>
-    </div>
-    <!-- Views -->
-    <div id="homeView" class="view">
-
-        <div class="dashboard">
-
-            <div class="card">
-                <div class="label">Total Sale</div>
-                <div class="value" id="totalSale">₹--</div>
-            </div>
-
-            <div class="card">
-                <div class="label">Sales Income</div>
-                <div class="value" id="salesIncome">₹--</div>
-            </div>
-
-            <div class="card">
-                <div class="label">Operational Expense</div>
-                <div class="value" id="operationalExpense">₹--</div>
-            </div>
-
-            <div class="card">
-                <div class="label">Gross Profit</div>
-                <div class="value" id="grossProfit">₹--</div>
-            </div>
-
-            <div id="dashboardRefreshFab" class="dashboard-fab" onclick="refreshDashboard()">
-
-                <span id="dashboardRefreshIcon">
-                    ↻
-                </span>
-
-            </div>
-
+        <div class="g_id_signin" data-type="standard">
         </div>
 
     </div>
 
-    <!-- Move your existing inventory section here -->
-    <div id="productsView" class="view" style="display:none;">
+    <div id="appScreen" style="display:none">
 
-        <div id="inventorySection">
-            <div class="inventory-header">
-
-                <div class="header-item">
-                    <div class="label">Products</div>
-                    <div class="value" id="totalProducts">--</div>
-                </div>
-
-                <div class="header-item">
-                    <div class="label">Total Value</div>
-                    <div class="value" id="totalValue">₹--</div>
-                </div>
-
-                <button id="syncBtn" onclick="refreshProducts()">
-                    <span id="syncIcon">↻</span>
-                </button>
-
-
-
-
-            </div>
-            <div id="inventory_product_gallery"></div>
-            <div class="fab" onclick="showAddNewProductForm()">
-                +
+        <!-- Bottom Tab Bar -->
+        <div class="bottom-tab-bar">
+            <div class="tab active" onclick="switchTab('home')">
+                Dashboard
             </div>
 
-            <!-- your existing form stays as-is -->
-            <div id="inventory_add_new_product" class="form-container" style="display:none;">
-                <div style="
+            <div class="tab" onclick="switchTab('products')">
+                Inventory
+            </div>
+
+            <div class="tab" onclick="switchTab('expenses')">
+                Expenses
+            </div>
+
+            <div class="tab" onclick="switchTab('sales')">
+                Sales
+            </div>
+        </div>
+        <!-- Views -->
+        <div id="homeView" class="view">
+
+            <div class="dashboard">
+
+                <div class="card">
+                    <div class="label">Total Sale</div>
+                    <div class="value" id="totalSale">₹--</div>
+                </div>
+
+                <div class="card">
+                    <div class="label">Sales Income</div>
+                    <div class="value" id="salesIncome">₹--</div>
+                </div>
+
+                <div class="card">
+                    <div class="label">Operational Expense</div>
+                    <div class="value" id="operationalExpense">₹--</div>
+                </div>
+
+                <div class="card">
+                    <div class="label">Gross Profit</div>
+                    <div class="value" id="grossProfit">₹--</div>
+                </div>
+
+                <div id="dashboardRefreshFab" class="dashboard-fab" onclick="refreshDashboard()">
+
+                    <span id="dashboardRefreshIcon">
+                        ↻
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Move your existing inventory section here -->
+        <div id="productsView" class="view" style="display:none;">
+
+            <div id="inventorySection">
+                <div class="inventory-header">
+
+                    <div class="header-item">
+                        <div class="label">Products</div>
+                        <div class="value" id="totalProducts">--</div>
+                    </div>
+
+                    <div class="header-item">
+                        <div class="label">Total Value</div>
+                        <div class="value" id="totalValue">₹--</div>
+                    </div>
+
+                    <button id="syncBtn" onclick="refreshProducts()">
+                        <span id="syncIcon">↻</span>
+                    </button>
+
+
+
+
+                </div>
+                <div id="inventory_product_gallery"></div>
+                <div class="fab" onclick="showAddNewProductForm()">
+                    +
+                </div>
+
+                <!-- your existing form stays as-is -->
+                <div id="inventory_add_new_product" class="form-container" style="display:none;">
+                    <div style="
   display:flex;
   justify-content:flex-end;
   align-items:center;
 ">
-                    <button onclick="hideAddNewProductForm()" style="
+                        <button onclick="hideAddNewProductForm()" style="
       width:auto;
       background:#ff4d4d;
       padding:0.4rem 0.7rem;
       border-radius:0.4rem;
     ">
-                        ✕
+                            ✕
+                        </button>
+                    </div>
+
+                    <div class="form-fields">
+
+                        <label>Product Name</label>
+                        <input id="inventory_add_new_product_name" type="text" placeholder="Product Name" />
+
+                        <label>Amount (₹)</label>
+                        <input id="inventory_add_new_product_amount" type="number" placeholder="Amount (₹)" />
+
+                        <label>Manufacturing Cost (₹)</label>
+                        <input id="inventory_add_new_product_manufacturing_cost" type="number"
+                            placeholder="Manufacturing Cost (₹)" min="1" value="300" />
+
+                        <label>Stock Quantity</label>
+                        <input id="inventory_add_new_product_quantity" type="number" min="1" value="1" />
+
+                        <label>Photo</label>
+                        <input id="inventory_add_new_product_photo" type="file" accept="image/*" />
+
+                    </div>
+
+                    <button id="inventory_add_new_product_btn_submit" class="submit-button"
+                        onclick="updateInventoryAddNewProduct()">
+                        SUBMIT
                     </button>
-                </div>
-
-                <div class="form-fields">
-
-                    <label>Product Name</label>
-                    <input id="inventory_add_new_product_name" type="text" placeholder="Product Name" />
-
-                    <label>Amount (₹)</label>
-                    <input id="inventory_add_new_product_amount" type="number" placeholder="Amount (₹)" />
-
-                    <label>Manufacturing Cost (₹)</label>
-                    <input id="inventory_add_new_product_manufacturing_cost" type="number"
-                        placeholder="Manufacturing Cost (₹)" min="1" value="300" />
-
-                    <label>Stock Quantity</label>
-                    <input id="inventory_add_new_product_quantity" type="number" min="1" value="1" />
-
-                    <label>Photo</label>
-                    <input id="inventory_add_new_product_photo" type="file" accept="image/*" />
 
                 </div>
+            </div>
+        </div>
 
-                <button id="inventory_add_new_product_btn_submit" class="submit-button"
-                    onclick="updateInventoryAddNewProduct()">
-                    SUBMIT
+        <div id="expensesView" class="view" style="display:none;">
+
+            <div class="expense-header">
+
+                <div class="header-item">
+                    <div class="label">Total</div>
+                    <div class="value" id="expenseTotal">--</div>
+                </div>
+
+                <div class="header-item">
+                    <div class="label">Product Cost</div>
+                    <div class="value" id="expenseProductCost">--</div>
+                </div>
+
+                <div class="header-item">
+                    <div class="label">Operational Expense</div>
+                    <div class="value" id="expenseOperational">--</div>
+                </div>
+
+            </div>
+
+            <div class="month-picker-container">
+                <button onclick="openMonthPicker()" class="month-btn">
+                    📅 <span id="selectedMonthLabel">June</span>
                 </button>
-
-            </div>
-        </div>
-    </div>
-
-    <div id="expensesView" class="view" style="display:none;">
-
-        <div class="expense-header">
-
-            <div class="header-item">
-                <div class="label">Total</div>
-                <div class="value" id="expenseTotal">--</div>
             </div>
 
-            <div class="header-item">
-                <div class="label">Product Cost</div>
-                <div class="value" id="expenseProductCost">--</div>
-            </div>
-
-            <div class="header-item">
-                <div class="label">Operational Expense</div>
-                <div class="value" id="expenseOperational">--</div>
-            </div>
-
-        </div>
-
-        <div class="month-picker-container">
-            <button onclick="openMonthPicker()" class="month-btn">
-                📅 <span id="selectedMonthLabel">June</span>
-            </button>
-        </div>
-
-        <!-- <div class="month-selector" onclick="openMonthPicker()">
+            <!-- <div class="month-selector" onclick="openMonthPicker()">
   <span id="selectedMonth">June</span>
 </div> -->
 
-        <div id="expenseList"></div>
+            <div id="expenseList"></div>
 
-        <div id="expenseFab" class="fab" onclick="openAddExpense()">
-            +
+            <div id="expenseFab" class="fab" onclick="openAddExpense()">
+                +
+            </div>
+
         </div>
 
-    </div>
+        <div id="salesView" class="view" style="display:none;">
 
-    <div id="salesView" class="view" style="display:none;">
+            <div class="sales-header">
 
-        <div class="sales-header">
-
-            <div class="header-item">
-                <div class="label">Total Sales</div>
-                <div class="value" id="salesTotal">
-                    ₹--
+                <div class="header-item">
+                    <div class="label">Total Sales</div>
+                    <div class="value" id="salesTotal">
+                        ₹--
+                    </div>
                 </div>
-            </div>
 
-            <div class="header-item">
-                <div class="label">After Commission</div>
-                <div class="value" id="salesCommission">
-                    ₹--
+                <div class="header-item">
+                    <div class="label">After Commission</div>
+                    <div class="value" id="salesCommission">
+                        ₹--
+                    </div>
                 </div>
-            </div>
 
-            <div class="header-item">
-                <div class="label">After Expense</div>
-                <div class="value" id="salesProfit">
-                    ₹--
+                <div class="header-item">
+                    <div class="label">After Expense</div>
+                    <div class="value" id="salesProfit">
+                        ₹--
+                    </div>
                 </div>
+
             </div>
 
-        </div>
-
-        <div class="month-picker-container">
-            <button onclick="openMonthPicker()" class="month-btn">
-                📅 <span id="selectedMonthLabelSales">June</span>
-            </button>
-        </div>
-
-        <div id="salesList"></div>
-
-    </div>
-
-    <div id="monthModal" class="action-modal" style="display:none;">
-        <div class="action-modal-content">
-
-            <div class="action-modal-header">
-                <h3>Select Month</h3>
-                <button class="modal-close-btn" onclick="closeMonthPicker()">✕</button>
+            <div class="month-picker-container">
+                <button onclick="openMonthPicker()" class="month-btn">
+                    📅 <span id="selectedMonthLabelSales">June</span>
+                </button>
             </div>
 
-            <select id="monthSelect">
-                <option>January</option>
-                <option>February</option>
-                <option>March</option>
-                <option>April</option>
-                <option>May</option>
-                <option>June</option>
-                <option>July</option>
-                <option>August</option>
-                <option>September</option>
-                <option>October</option>
-                <option>November</option>
-                <option>December</option>
-            </select>
-
-            <button style="margin-top:1rem;" onclick="applyMonth()">
-                APPLY
-            </button>
+            <div id="salesList"></div>
 
         </div>
-    </div>
 
-    <div id="imagePreviewOverlay" onclick="hideImagePreview()">
+        <div id="monthModal" class="action-modal" style="display:none;">
+            <div class="action-modal-content">
 
-        <img id="imagePreview" src="" onclick="event.stopPropagation()">
+                <div class="action-modal-header">
+                    <h3>Select Month</h3>
+                    <button class="modal-close-btn" onclick="closeMonthPicker()">✕</button>
+                </div>
 
-    </div>
+                <select id="monthSelect">
+                    <option>January</option>
+                    <option>February</option>
+                    <option>March</option>
+                    <option>April</option>
+                    <option>May</option>
+                    <option>June</option>
+                    <option>July</option>
+                    <option>August</option>
+                    <option>September</option>
+                    <option>October</option>
+                    <option>November</option>
+                    <option>December</option>
+                </select>
 
-    <div id="actionModal" class="action-modal" style="display:none;">
-
-        <div class="action-modal-content">
-
-            <div class="action-modal-header">
-
-                <h3 id="actionModalTitle">
-                    Action
-                </h3>
-
-                <button class="modal-close-btn" onclick="closeActionModal()">
-                    ✕
+                <button style="margin-top:1rem;" onclick="applyMonth()">
+                    APPLY
                 </button>
 
             </div>
+        </div>
 
-            <div id="actionModalBody">
+        <div id="imagePreviewOverlay" onclick="hideImagePreview()">
+
+            <img id="imagePreview" src="" onclick="event.stopPropagation()">
+
+        </div>
+
+        <div id="actionModal" class="action-modal" style="display:none;">
+
+            <div class="action-modal-content">
+
+                <div class="action-modal-header">
+
+                    <h3 id="actionModalTitle">
+                        Action
+                    </h3>
+
+                    <button class="modal-close-btn" onclick="closeActionModal()">
+                        ✕
+                    </button>
+
+                </div>
+
+                <div id="actionModalBody">
+                </div>
+
             </div>
 
         </div>
 
+        <div id="loadingSpinner">
+            <div class="spinner"></div>
+        </div>
     </div>
-
-    <div id="loadingSpinner">
-        <div class="spinner"></div>
-    </div>
-
     <script src="config.js"></script>
     <script src="javascript.js"></script>
 
