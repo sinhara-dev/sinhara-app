@@ -1,0 +1,2 @@
+# sinhara-app
+Sinhara dashboard
