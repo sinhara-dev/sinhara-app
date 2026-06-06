@@ -11,16 +11,37 @@ function parseJwt(token) {
 function handleCredentialResponse(response) {
   const payload = parseJwt(response.credential);
 
-  console.log(payload);
-
-  if (ALLOWED_USERS.includes(payload.email)) {
-    localStorage.setItem("google_token", response.credential);
-    document.getElementById("loginScreen").style.display = "none";
-
-    document.getElementById("appScreen").style.display = "block";
-  } else {
+  if (!ALLOWED_USERS.includes(payload.email)) {
     alert("Access denied");
+    return;
   }
+
+  // store real session token
+  localStorage.setItem("google_token", response.credential);
+
+  showApp();
+}
+
+function tryAutoLogin() {
+  const token = localStorage.getItem("google_token");
+
+  if (!token) return false;
+
+  try {
+    const payload = parseJwt(token);
+
+    const now = Math.floor(Date.now() / 1000);
+    const expired = payload.exp < now;
+
+    if (!expired && ALLOWED_USERS.includes(payload.email)) {
+      showApp();
+      return true;
+    }
+  } catch (e) {
+    console.log("Bad token");
+  }
+
+  return false;
 }
 
 window.onload = function () {
@@ -33,7 +54,35 @@ window.onload = function () {
 
   if (label) label.innerText = currentMonth;
   if (select) select.value = currentMonth;
+
+  // 1. Try stored session first (FAST, no Google call)
+  if (tryAutoLogin()) return;
+
+  // 2. Initialize Google login only if needed
+  google.accounts.id.initialize({
+    client_id:
+      "382055113607-tsn501fgtlisnflhf7ldeg87mh8f32n5.apps.googleusercontent.com",
+    callback: handleCredentialResponse,
+    use_fedcm_for_prompt: true,
+  });
+
+  // 3. Try silent login
+  google.accounts.id.prompt((notification) => {
+    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+      showLogin();
+    }
+  });
 };
+
+function showApp() {
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("appScreen").style.display = "block";
+}
+
+function showLogin() {
+  document.getElementById("loginScreen").style.display = "flex";
+  document.getElementById("appScreen").style.display = "none";
+}
 
 const MARKETING_TEAMS = [
   "Sinhara",
