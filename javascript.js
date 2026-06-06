@@ -829,62 +829,6 @@ async function updateInventoryAddNewProduct() {
   }
 }
 
-let activeTab = null;
-
-function switchTab(tab) {
-  activeTab = tab;
-
-  const homeView = document.getElementById("homeView");
-
-  const productsView = document.getElementById("productsView");
-
-  const expensesView = document.getElementById("expensesView");
-
-  const salesView = document.getElementById("salesView");
-
-  const expenseFab = document.getElementById("expenseFab");
-
-  const tabs = document.querySelectorAll(".tab");
-
-  // reset all tabs
-  tabs.forEach((t) => t.classList.remove("active"));
-
-  // hide everything first (important part)
-  [homeView, productsView, expensesView, salesView].forEach((view) => {
-    view.style.display = "none";
-  });
-
-  if (expenseFab) expenseFab.style.display = "none";
-
-  // show selected tab
-  if (tab === "home") {
-    homeView.style.display = "block";
-    tabs[0].classList.add("active");
-
-    loadDashboard();
-  } else if (tab === "products") {
-    productsView.style.display = "block";
-    tabs[1].classList.add("active");
-
-    const fab = document.querySelector(".fab");
-    if (fab) fab.style.display = "flex";
-
-    renderCachedProducts();
-  } else if (tab === "expenses") {
-    expensesView.style.display = "block";
-    tabs[2].classList.add("active");
-
-    if (expenseFab) expenseFab.style.display = "flex";
-
-    loadExpenseHeader(getCurrentMonthName());
-  } else if (tab === "sales") {
-    salesView.style.display = "block";
-    tabs[3].classList.add("active");
-
-    loadSalesData(getCurrentMonthName());
-  }
-}
-
 function openAddExpense() {
   const today = new Date().toISOString().split("T")[0];
 
