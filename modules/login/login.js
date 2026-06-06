@@ -1,14 +1,9 @@
-import { checkAuth } from "../../core/auth.js";
-import { initRouter } from "../../core/router.js";
-import { initMonthPicker } from "../../shared/monthPicker.js";
+/* global google */
+
+import { startApplication } from "../../core/app.js";
 
 let gisInitialized = false;
-
-function showApp() {
-  console.log("Showing app");
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("appScreen").style.display = "block";
-}
+let gisRendered = false;
 
 function handleCredentialResponse(response) {
   console.log("handleCredentialResponse called");
@@ -16,20 +11,7 @@ function handleCredentialResponse(response) {
   // store real session token
   localStorage.setItem("google_token", response.credential);
 
-  checkAuth()
-    .then((authorized) => {
-      if (authorized) {
-        showApp();
-        initRouter();
-        initMonthPicker();
-      } else {
-        showLogin();
-      }
-    })
-    .catch((e) => {
-      console.error("Error during authentication check:", e);
-      showLogin();
-    });
+  startApplication();
 }
 
 function initGoogle() {
@@ -45,6 +27,9 @@ function initGoogle() {
 }
 
 function renderLoginUI() {
+  if (gisRendered) return;
+  gisRendered = true;
+
   google.accounts.id.renderButton(document.getElementById("googleButton"), {
     type: "standard",
     theme: "filled_blue",

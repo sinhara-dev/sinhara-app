@@ -1,3 +1,4 @@
+import { showStatus } from "../utils/status.js";
 import { GAS_URL } from "../config.js";
 
 const TOKEN_KEY = "google_token";
@@ -35,15 +36,13 @@ export async function isAuthorized(email) {
     }
 
     if (response.data) {
-      //   showApp();
       return true;
     } else {
       throw new Error("Access denied");
     }
   } catch (e) {
     console.log("Error during token validation:", e.message);
-    // showStatus(e.message, true);
-    // showLogin();
+    showStatus(e.message, true);
     return false;
   }
 }
