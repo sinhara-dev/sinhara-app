@@ -1,29 +1,23 @@
-const routes = {
+import { dashboard } from "../modules/dashboard/dashboard.js";
+import { inventory } from "../modules/inventory/inventory.js";
+import { expense } from "../modules/expense/expense.js";
+import { sales } from "../modules/sales/sales.js";
+
+export const routes = {
   home: {
-    viewId: "homeView",
-    onEnter: () => {
-      loadDashboard();
-    },
+    viewId: "viewDashboard",
+    onEnter: () => dashboard.onEnter(),
   },
-
-  products: {
-    viewId: "productsView",
-    onEnter: () => {
-      renderCachedProducts();
-    },
+  inventory: {
+    viewId: "viewInventory",
+    onEnter: () => inventory.onEnter(),
   },
-
-  expenses: {
+  expense: {
     viewId: "expensesView",
-    onEnter: () => {
-      loadExpenseHeader(getCurrentMonthName());
-    },
+    onEnter: () => expense.onEnter(),
   },
-
   sales: {
     viewId: "salesView",
-    onEnter: () => {
-      loadSalesData(getCurrentMonthName());
-    },
+    onEnter: () => sales.onEnter(),
   },
 };

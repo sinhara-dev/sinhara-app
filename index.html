@@ -1017,16 +1017,16 @@
     <div id="appScreen" style="display: none">
       <!-- Bottom Tab Bar -->
       <div class="bottom-tab-bar">
-        <div class="tab active" onclick="switchTab('home')">Dashboard</div>
+        <div id="tab-dashboard" class="tab">Dashboard</div>
 
-        <div class="tab" onclick="switchTab('products')">Inventory</div>
+        <div id="tab-inventory" class="tab">Inventory</div>
 
-        <div class="tab" onclick="switchTab('expenses')">Expenses</div>
+        <div id="tab-expenses" class="tab">Expenses</div>
 
-        <div class="tab" onclick="switchTab('sales')">Sales</div>
+        <div id="tab-sales" class="tab">Sales</div>
       </div>
       <!-- Views -->
-      <div id="homeView" class="view">
+      <div id="viewDashboard" class="view">
         <div class="dashboard">
           <div class="card">
             <div class="label">Total Sale</div>
@@ -1048,18 +1048,13 @@
             <div class="value" id="grossProfit">₹--</div>
           </div>
 
-          <div
-            id="dashboardRefreshFab"
-            class="dashboard-fab"
-            onclick="refreshDashboard()"
-          >
+          <div id="dashboardRefreshFab" class="dashboard-fab">
             <span id="dashboardRefreshIcon"> ↻ </span>
           </div>
         </div>
       </div>
 
-      <!-- Move your existing inventory section here -->
-      <div id="productsView" class="view" style="display: none">
+      <div id="viewInventory" class="view" style="display: none">
         <div id="inventorySection">
           <div class="inventory-header">
             <div class="header-item">
@@ -1072,14 +1067,13 @@
               <div class="value" id="totalValue">₹--</div>
             </div>
 
-            <button id="syncBtn" onclick="refreshProducts()">
+            <button id="syncBtn">
               <span id="syncIcon">↻</span>
             </button>
           </div>
           <div id="inventory_product_gallery"></div>
-          <div class="fab" onclick="showAddNewProductForm()">+</div>
+          <div id="inventory_add_new_product_fab" class="fab">+</div>
 
-          <!-- your existing form stays as-is -->
           <div
             id="inventory_add_new_product"
             class="form-container"
@@ -1093,7 +1087,7 @@
               "
             >
               <button
-                onclick="hideAddNewProductForm()"
+                id="inventory_add_new_product_btn_close"
                 style="
                   width: auto;
                   background: #ff4d4d;
@@ -1148,7 +1142,6 @@
             <button
               id="inventory_add_new_product_btn_submit"
               class="submit-button"
-              onclick="updateInventoryAddNewProduct()"
             >
               SUBMIT
             </button>
@@ -1175,18 +1168,14 @@
         </div>
 
         <div class="month-picker-container">
-          <button onclick="openMonthPicker()" class="month-btn">
+          <button id="month-picker-open-btn-expense" class="month-btn">
             📅 <span id="selectedMonthLabel">June</span>
           </button>
         </div>
 
-        <!-- <div class="month-selector" onclick="openMonthPicker()">
-  <span id="selectedMonth">June</span>
-</div> -->
-
         <div id="expenseList"></div>
 
-        <div id="expenseFab" class="fab" onclick="openAddExpense()">+</div>
+        <div id="expenseFab" class="fab">+</div>
       </div>
 
       <div id="salesView" class="view" style="display: none">
@@ -1208,7 +1197,7 @@
         </div>
 
         <div class="month-picker-container">
-          <button onclick="openMonthPicker()" class="month-btn">
+          <button id="month-picker-open-btn-sales" class="month-btn">
             📅 <span id="selectedMonthLabelSales">June</span>
           </button>
         </div>
@@ -1220,7 +1209,7 @@
         <div class="action-modal-content">
           <div class="action-modal-header">
             <h3>Select Month</h3>
-            <button class="modal-close-btn" onclick="closeMonthPicker()">
+            <button id="month-picker-close-btn" class="modal-close-btn">
               ✕
             </button>
           </div>
@@ -1240,11 +1229,13 @@
             <option>December</option>
           </select>
 
-          <button style="margin-top: 1rem" onclick="applyMonth()">APPLY</button>
+          <button id="month-picker-apply-btn" style="margin-top: 1rem">
+            APPLY
+          </button>
         </div>
       </div>
 
-      <div id="imagePreviewOverlay" onclick="hideImagePreview()">
+      <div id="imagePreviewOverlay">
         <img id="imagePreview" src="" onclick="event.stopPropagation()" />
       </div>
 
@@ -1253,9 +1244,7 @@
           <div class="action-modal-header">
             <h3 id="actionModalTitle">Action</h3>
 
-            <button class="modal-close-btn" onclick="closeActionModal()">
-              ✕
-            </button>
+            <button id="actionModalCloseBtn" class="modal-close-btn">✕</button>
           </div>
 
           <div id="actionModalBody"></div>
@@ -1266,9 +1255,6 @@
         <div class="spinner"></div>
       </div>
     </div>
-    <script src="config.js"></script>
-    <script src="javascript.js"></script>
-    <script src="core/routes.js"></script>
-    <script src="core/router.js"></script>
+    <script type="module" src="main.js"></script>
   </body>
 </html>
