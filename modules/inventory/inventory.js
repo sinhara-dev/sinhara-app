@@ -319,13 +319,13 @@ function renderProducts(products) {
     stock.id = `stock_${product.id}`;
     stock.textContent = `Stock: ${product.quantity}`;
 
+    const id = document.createElement("div");
+    id.className = "product-id";
+    id.textContent = `#${product.id}`;
+
     colInfo.appendChild(amount);
     colInfo.appendChild(stock);
-
-    // ---------- id ----------
-    const colId = document.createElement("div");
-    colId.className = "col-id";
-    colId.textContent = `#${product.id}`;
+    colInfo.appendChild(id);
 
     // ---------- actions ----------
     const colActions = document.createElement("div");
@@ -353,7 +353,7 @@ function renderProducts(products) {
     // ---------- assemble top row ----------
     topRow.appendChild(colImg);
     topRow.appendChild(colInfo);
-    topRow.appendChild(colId);
+    // topRow.appendChild(colId);
     topRow.appendChild(colActions);
 
     // ---------- product name ----------

@@ -1,6 +1,6 @@
 import { GAS_URL } from "../../config.js";
 import { showStatus } from "../../utils/status.js";
-import { getCurrentMonthName } from "../../utils/utils.js";
+import { formatDateMonthDay, getCurrentMonthName } from "../../utils/utils.js";
 import { formatAmount } from "../../utils/utils.js";
 import { openActionModal, closeActionModal } from "../../utils/modal.js";
 import { openMonthPicker } from "../../shared/monthPicker.js";
@@ -221,6 +221,14 @@ function renderExpenseList(rows) {
   container.innerHTML = "";
 
   rows.forEach((r) => {
+    const date = new Date(r.date);
+
+    const monthDay = formatDateMonthDay(date);
+
+    const dayName = date.toLocaleDateString("en-US", {
+      weekday: "long",
+    });
+
     const card = document.createElement("div");
     card.className = "expense-card";
 
@@ -228,8 +236,13 @@ function renderExpenseList(rows) {
       <div class="expense-row">
 
         <!-- Date -->
-        <div class="expense-date">
-          ${r.date}
+        <div class="col-expense-date">
+          <div class="expense-date">
+            ${monthDay}
+          </div>
+          <div class="expense-day">
+            ${dayName}
+          </div>
         </div>
 
         <!-- Main content -->
