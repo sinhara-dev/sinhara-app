@@ -1,14 +1,9 @@
-const ALLOWED_USERS = [
-  "sinharacreations@gmail.com",
-  // "vijinvv125@gmail.com",
-  "dayanandanaap@gmail.com",
-];
-
 function parseJwt(token) {
   return JSON.parse(atob(token.split(".")[1]));
 }
 
 function handleCredentialResponse(response) {
+  console.log("handleCredentialResponse called");
   const payload = parseJwt(response.credential);
 
   if (!ALLOWED_USERS.includes(payload.email)) {
@@ -22,31 +17,26 @@ function handleCredentialResponse(response) {
   showApp();
 }
 
-function tryAutoLogin() {
-  const token = localStorage.getItem("google_token");
+function trySilentLogin() {
+  console.log("Trying silent login...");
 
-  if (!token) return false;
+  google.accounts.id.prompt((notification) => {
+    console.log("Prompt result:", notification);
 
-  try {
-    const payload = parseJwt(token);
-
-    const now = Math.floor(Date.now() / 1000);
-    const expired = payload.exp < now;
-
-    if (!expired && ALLOWED_USERS.includes(payload.email)) {
-      showApp();
-      return true;
+    if (notification.isNotDisplayed()) {
+      // Google cannot silently login → show login UI
+      showLogin();
+      return;
     }
-  } catch (e) {
-    console.log("Bad token");
-  }
 
-  return false;
+    if (notification.isSkippedMoment()) {
+      showLogin();
+      return;
+    }
+  });
 }
 
-window.onload = function () {
-  switchTab("home");
-
+window.onload = async function () {
   const currentMonth = getCurrentMonthName();
 
   const label = document.getElementById("selectedMonthLabel");
@@ -55,33 +45,88 @@ window.onload = function () {
   if (label) label.innerText = currentMonth;
   if (select) select.value = currentMonth;
 
-  // 1. Try stored session first (FAST, no Google call)
-  if (tryAutoLogin()) return;
+  const token = getStoredAuthToken();
+  if (!token) {
+    console.log("No stored token found");
+    showLogin();
+    return;
+  }
 
-  // 2. Initialize Google login only if needed
+  const payload = parseJwt(token);
+  if (!payload.email) {
+    console.log("Invalid token: no email found");
+    showLogin();
+    return;
+  }
+
+  try {
+    console.log("Validating stored token for user:", payload.email);
+    const res = await fetch(
+      GAS_URL +
+        "?action=validateUser&email=" +
+        encodeURIComponent(payload.email),
+    );
+    const response = await res.json();
+    console.log("Validation response:", response);
+    if (!response.success) {
+      throw new Error(response.error || "Failed to validate user");
+    }
+
+    if (response.data) {
+      showApp();
+    } else {
+      throw new Error("Access denied");
+    }
+  } catch (e) {
+    console.log("Error during token validation:", e.message);
+    showStatus(e.message, true);
+    showLogin();
+  }
+};
+
+function getStoredAuthToken() {
+  return localStorage.getItem("google_token");
+}
+
+function showApp() {
+  console.log("Showing app");
+  switchTab("home");
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("appScreen").style.display = "block";
+}
+
+let gisInitialized = false;
+
+function initGoogle() {
+  if (gisInitialized) return;
+  gisInitialized = true;
+
   google.accounts.id.initialize({
     client_id:
       "382055113607-tsn501fgtlisnflhf7ldeg87mh8f32n5.apps.googleusercontent.com",
     callback: handleCredentialResponse,
     use_fedcm_for_prompt: true,
   });
+}
 
-  // 3. Try silent login
-  google.accounts.id.prompt((notification) => {
-    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-      showLogin();
-    }
+function renderLoginUI() {
+  google.accounts.id.renderButton(document.getElementById("googleButton"), {
+    type: "standard",
+    theme: "filled_blue",
+    size: "large",
+    shape: "pill",
   });
-};
-
-function showApp() {
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("appScreen").style.display = "block";
 }
 
 function showLogin() {
+  console.log("Initializing google login");
+  initGoogle();
+  renderLoginUI();
+
   document.getElementById("loginScreen").style.display = "flex";
   document.getElementById("appScreen").style.display = "none";
+
+  trySilentLogin();
 }
 
 const MARKETING_TEAMS = [
@@ -95,7 +140,6 @@ const MARKETING_TEAMS = [
 let productsCache = [];
 let expenseCache = {};
 let salesCache = {};
-let activeTab = "";
 
 function loadInventoryProducts() {
   showLoader();
@@ -784,6 +828,8 @@ async function updateInventoryAddNewProduct() {
     submitButton.disabled = false;
   }
 }
+
+let activeTab = null;
 
 function switchTab(tab) {
   activeTab = tab;
