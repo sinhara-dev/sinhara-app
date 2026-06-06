@@ -1,6 +1,6 @@
 const ALLOWED_USERS = [
   "sinharacreations@gmail.com",
-  //   "vijinvv125@gmail.com",
+  // "vijinvv125@gmail.com",
   "dayanandanaap@gmail.com",
 ];
 
