@@ -41,14 +41,14 @@ async function loadDashboard() {
   setDashboardLoading(true);
 
   try {
-    // const res = await fetch(GAS_URL + "?action=getDashboardData");
-    // const data = await res.json();
+    const res = await fetch(GAS_URL + "?action=getDashboardData");
+    const data = await res.json();
 
-    // if (!data.success) {
-    //   throw new Error(data.error || "Unable to fetch data");
-    // }
+    if (!data.success) {
+      throw new Error(data.error || "Unable to fetch data");
+    }
 
-    // setDashboardValues(data.data);
+    setDashboardValues(data.data);
     dashboardLoaded = true;
     setDashboardLoading(false);
   } catch (err) {

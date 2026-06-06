@@ -61,6 +61,7 @@ function initTabListeners() {
 
 export function initRouter() {
   initTabListeners();
+
   initDashboard();
   initInventory();
   initExpense();
