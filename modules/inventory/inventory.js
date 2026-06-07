@@ -266,6 +266,22 @@ async function submitStockUpdate(productId) {
   }
 }
 
+function showStatusMessage(message) {
+  const statusDiv = document.getElementById("inventory-status-message");
+
+  if (!statusDiv) return;
+
+  statusDiv.innerText = message;
+}
+
+function hideStatusMessage() {
+  const statusDiv = document.getElementById("inventory-status-message");
+
+  if (!statusDiv) return;
+
+  statusDiv.innerText = "";
+}
+
 function renderProducts(products) {
   productsCache = products;
 
@@ -341,7 +357,7 @@ function renderProducts(products) {
 
     const updateBtn = document.createElement("button");
     updateBtn.className = "update-btn";
-    updateBtn.textContent = "UPDATE STOCK";
+    updateBtn.textContent = "ADD STOCK";
 
     updateBtn.addEventListener("click", (event) => {
       openStockDialog(event, product.id);
@@ -445,15 +461,9 @@ function clearInventoryAddNewProductForm() {
   document.getElementById("inventory_add_new_product_photo").value = "";
 }
 
-function showLoader() {
-  document.getElementById("loadingSpinner").style.display = "flex";
-}
-
-function hideLoader() {
-  document.getElementById("loadingSpinner").style.display = "none";
-}
-
 function showAddNewProductForm() {
+  clearInventoryAddNewProductForm();
+
   document.body.classList.add("modal-open");
   document.getElementById("inventory_add_new_product").style.display = "block";
 
@@ -510,7 +520,8 @@ async function updateInventoryAddNewProduct() {
   }
 
   submitButton.disabled = true;
-  showLoader();
+  hideAddNewProductForm();
+  showStatusMessage("Creating new product...");
 
   try {
     const base64 = await new Promise((resolve, reject) => {
@@ -547,14 +558,10 @@ async function updateInventoryAddNewProduct() {
     await refreshProducts();
 
     showStatus("Product created.\nID: " + response.data.productId);
-
-    clearInventoryAddNewProductForm();
-
-    hideAddNewProductForm();
   } catch (err) {
     showStatus(err.message, true);
   } finally {
-    hideLoader();
+    hideStatusMessage();
 
     submitButton.disabled = false;
   }

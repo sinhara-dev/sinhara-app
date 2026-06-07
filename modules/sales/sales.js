@@ -127,9 +127,18 @@ function showSalesLoading() {
   document.getElementById("salesProfit").innerText = "██████";
 
   document.getElementById("salesList").innerHTML = `
-    <div class="expense-card skeleton-card"></div>
-    <div class="expense-card skeleton-card"></div>
-    <div class="expense-card skeleton-card"></div>
+      <div class="expense-skeleton">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+      <div class="expense-skeleton">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
+      <div class="expense-skeleton">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
+      </div>
   `;
 }
 

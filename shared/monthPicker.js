@@ -1,3 +1,5 @@
+import { getCurrentMonthName } from "../utils/utils.js";
+
 let onApply = null;
 
 export function initMonthPicker() {
@@ -6,6 +8,14 @@ export function initMonthPicker() {
 
   applyBtn.addEventListener("click", applyMonth);
   closeBtn.addEventListener("click", closeMonthPicker);
+
+  const currentMonth = getCurrentMonthName();
+
+  const label = document.getElementById("selectedMonthLabel");
+  const select = document.getElementById("monthSelect");
+
+  if (label) label.innerText = currentMonth;
+  if (select) select.value = currentMonth;
 }
 
 export function openMonthPicker(callback) {

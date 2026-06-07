@@ -7,12 +7,20 @@ import { openMonthPicker } from "../../shared/monthPicker.js";
 
 const expenseCache = {};
 
-function showLoader() {
-  document.getElementById("loadingSpinner").style.display = "flex";
+function showStatusMessage(message) {
+  const statusDiv = document.getElementById("expense-status-message");
+
+  if (!statusDiv) return;
+
+  statusDiv.innerText = message;
 }
 
-function hideLoader() {
-  document.getElementById("loadingSpinner").style.display = "none";
+function hideStatusMessage() {
+  const statusDiv = document.getElementById("expense-status-message");
+
+  if (!statusDiv) return;
+
+  statusDiv.innerText = "";
 }
 
 async function submitExpense() {
@@ -30,7 +38,7 @@ async function submitExpense() {
 
   closeActionModal();
 
-  showLoader?.();
+  showStatusMessage("Creating new expense...");
 
   try {
     const res = await fetch(GAS_URL, {
@@ -59,7 +67,7 @@ async function submitExpense() {
   } catch (err) {
     showStatus(err.message, true);
   } finally {
-    hideLoader?.();
+    hideStatusMessage();
   }
 }
 

@@ -458,7 +458,7 @@
 
       .sold-btn,
       .update-btn {
-        width: 6rem;
+        width: 5.5rem;
 
         font-size: 0.6rem;
 
@@ -531,9 +531,10 @@
         background: white;
 
         padding: 0.6rem;
-        margin-bottom: 0.8rem;
 
-        border-bottom: 1px solid #ddd;
+        border-radius: 0.8rem;
+
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
         z-index: 1200;
       }
@@ -541,16 +542,16 @@
       .header-item {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
       }
 
       .header-item .label {
-        font-size: 0.7rem;
+        font-size: 0.6rem;
         color: #777;
       }
 
       .header-item .value {
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-weight: bold;
       }
 
@@ -636,6 +637,24 @@
         100% {
           transform: scale(1);
         }
+      }
+
+      #inventory-status-message {
+        display: flex;
+        justify-content: center;
+        font-size: 0.55rem;
+        color: #666;
+        margin-top: 0.2rem;
+        margin-bottom: 0.2rem;
+      }
+
+      #expense-status-message {
+        display: flex;
+        justify-content: center;
+        font-size: 0.55rem;
+        color: #666;
+        margin-top: 0.2rem;
+        margin-bottom: 0.2rem;
       }
 
       #inventory_product_gallery {
@@ -765,7 +784,6 @@
 
       .expense-header {
         position: sticky;
-        top: 0;
 
         display: flex;
         justify-content: space-between;
@@ -774,14 +792,14 @@
         background: white;
         padding: 0.6rem;
 
-        border-bottom: 1px solid #ddd;
-        z-index: 1200;
+        border-radius: 0.8rem;
+
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       }
 
       .month-picker-container {
         display: flex;
         justify-content: center;
-        margin-bottom: 1rem;
       }
 
       .month-btn {
@@ -790,8 +808,8 @@
         border-radius: 2rem;
         background: #2196f3;
         color: white;
-        font-size: 0.9rem;
-        margin-top: 0.5rem;
+        font-size: 0.7rem;
+        margin-top: 0.4rem;
       }
 
       .expense-card {
@@ -809,6 +827,12 @@
         gap: 0.8rem;
       }
 
+      .col-expense-date {
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+        gap: 0.2rem;
+      }
       .expense-date {
         width: 5rem;
         font-size: 0.7rem;
@@ -853,7 +877,7 @@
 
       /* Base badge */
       .expense-type {
-        font-size: 0.7rem;
+        font-size: 0.6rem;
         padding: 0.2rem 0.6rem;
         border-radius: 999px;
         /* pill shape */
@@ -897,31 +921,8 @@
         width: 60%;
       }
 
-      /* .month-selector {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 0.5rem 1rem;
-  border-radius: 999px;
-
-  background: white;
-  border: 1px solid #ddd;
-
-  font-weight: 600;
-  font-size: 0.9rem;
-
-  cursor: pointer;
-
-  margin: 0.8rem auto;
-  width: fit-content;
-}
-
-.month-selector:active {
-  transform: scale(0.98);
-} */
-
       .sales-header {
+        position: sticky;
         display: flex;
 
         justify-content: space-between;
@@ -930,11 +931,14 @@
         background: white;
 
         padding: 0.6rem;
-        margin-bottom: 0.8rem;
 
         border-radius: 0.8rem;
 
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      #salesList {
+        margin-top: 0.4rem;
       }
 
       .sales-card {
@@ -981,7 +985,6 @@
 
       .sales-team {
         min-width: 4.5rem;
-        background: #e3f2fd;
 
         padding: 0.25rem 0.6rem;
 
@@ -1005,9 +1008,9 @@
         color: #7b1fa2;
       }
 
-      .jindle-bindle {
+      .jindil-bindil {
         background: #fff3e0;
-        color: #ef6c00;
+        color: #f38831;
       }
 
       .ishis {
@@ -1094,6 +1097,7 @@
               <span id="syncIcon">↻</span>
             </button>
           </div>
+          <div id="inventory-status-message"></div>
           <div id="inventory_product_gallery"></div>
           <div id="inventory_add_new_product_fab" class="fab">+</div>
 
@@ -1195,6 +1199,8 @@
             📅 <span id="selectedMonthLabel">June</span>
           </button>
         </div>
+
+        <div id="expense-status-message"></div>
 
         <div id="expenseList"></div>
 
