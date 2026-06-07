@@ -3,7 +3,7 @@ import { showStatus } from "../../utils/status.js";
 import { formatDateMonthDay, getCurrentMonthName } from "../../utils/utils.js";
 import { openMonthPicker } from "../../shared/monthPicker.js";
 
-let salesCache = {};
+export const salesCache = {};
 
 export function initSales() {
   document
@@ -21,10 +21,6 @@ function showImagePreview(imageUrl) {
 
   document.getElementById("imagePreviewOverlay").style.display = "flex";
 }
-
-// function hideImagePreview() {
-//   document.getElementById("imagePreviewOverlay").style.display = "none";
-// }
 
 function renderSalesList(rows) {
   const container = document.getElementById("salesList");

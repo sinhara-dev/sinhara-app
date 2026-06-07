@@ -2,7 +2,7 @@ import { showStatus } from "../../utils/status.js";
 import { GAS_URL } from "../../config.js";
 import { getCurrentMonthName } from "../../utils/utils.js";
 
-let dashboardCache = {};
+export const dashboardCache = {};
 let selectedMonth = "";
 
 function setDashboardLoading(isLoading) {
@@ -26,7 +26,10 @@ function saveDashboardCache() {
 }
 
 function loadDashboardCache() {
-  dashboardCache = JSON.parse(localStorage.getItem("dashboardCache") || "{}");
+  Object.assign(
+    dashboardCache,
+    JSON.parse(localStorage.getItem("dashboardCache") || "{}"),
+  );
 }
 
 function setDashboardValues(data) {

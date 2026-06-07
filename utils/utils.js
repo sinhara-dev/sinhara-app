@@ -6,6 +6,11 @@ export function getCurrentMonthName() {
   return new Date().toLocaleString("en-US", { month: "long" });
 }
 
+export function getMonthNameFromDate(date) {
+  return new Date(date).toLocaleString("en-US", { month: "long" });
+}
+
+// 2026-06-01 => June 01
 export function formatDateMonthDay(date) {
   const d = new Date(date);
   if (isNaN(d)) return "Invalid Date";

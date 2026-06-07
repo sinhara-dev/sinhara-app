@@ -1,8 +1,10 @@
 import { GAS_URL } from "../../config.js";
 import { showStatus } from "../../utils/status.js";
-import { formatAmount } from "../../utils/utils.js";
+import { formatAmount, getMonthNameFromDate } from "../../utils/utils.js";
 import { MARKETING_TEAMS } from "../../config.js";
 import { openActionModal, closeActionModal } from "../../utils/modal.js";
+import { salesCache } from "../sales/sales.js";
+import { dashboardCache } from "../dashboard/dashboard.js";
 
 let productsCache = [];
 
@@ -222,6 +224,10 @@ async function submitSale(productId) {
     }
 
     await refreshProducts();
+
+    const month = getMonthNameFromDate(date);
+    delete salesCache[month];
+    delete dashboardCache[month];
 
     showStatus("Sale recorded");
   } catch (err) {
