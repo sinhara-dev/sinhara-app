@@ -1,7 +1,9 @@
 import { showStatus } from "../../utils/status.js";
 import { GAS_URL } from "../../config.js";
+import { getCurrentMonthName } from "../../utils/utils.js";
 
-let dashboardLoaded = false;
+let dashboardCache = {};
+let selectedMonth = "";
 
 function setDashboardLoading(isLoading) {
   const ids = ["totalSale", "salesIncome", "operationalExpense", "grossProfit"];
@@ -17,6 +19,14 @@ function setDashboardLoading(isLoading) {
       el.classList.remove("skeleton");
     }
   });
+}
+
+function saveDashboardCache() {
+  localStorage.setItem("dashboardCache", JSON.stringify(dashboardCache));
+}
+
+function loadDashboardCache() {
+  dashboardCache = JSON.parse(localStorage.getItem("dashboardCache") || "{}");
 }
 
 function setDashboardValues(data) {
@@ -35,28 +45,46 @@ function setDashboardValues(data) {
     "₹" + Number(data.grossProfit).toLocaleString("en-IN");
 }
 
-async function loadDashboard() {
-  if (dashboardLoaded) return;
+async function getDashboardDataFromServer(month) {
+  const res = await fetch(
+    GAS_URL +
+      "?action=getDashboardData" +
+      "&month=" +
+      encodeURIComponent(month),
+  );
+  const data = await res.json();
+
+  if (!data.success) {
+    throw new Error(data.error || "Unable to fetch data");
+  }
+
+  return data.data;
+}
+
+async function loadDashboard(month) {
+  if (dashboardCache[month]) {
+    setDashboardValues(dashboardCache[month]);
+    return;
+  }
 
   setDashboardLoading(true);
 
   try {
-    const res = await fetch(GAS_URL + "?action=getDashboardData");
-    const data = await res.json();
+    const data = await getDashboardDataFromServer(month);
 
-    if (!data.success) {
-      throw new Error(data.error || "Unable to fetch data");
-    }
-
-    setDashboardValues(data.data);
-    dashboardLoaded = true;
+    setDashboardValues(data);
     setDashboardLoading(false);
+    dashboardCache[month] = data;
+    saveDashboardCache();
   } catch (err) {
     showStatus(err, true);
+  } finally {
+    setDashboardLoading(false);
   }
 }
 
-async function refreshDashboard() {
+async function refreshDashboard(month) {
+  console.log("refreshdashboard called");
   setDashboardLoading(true);
 
   const icon = document.getElementById("dashboardRefreshIcon");
@@ -64,34 +92,56 @@ async function refreshDashboard() {
   icon.classList.add("dashboard-syncing");
 
   try {
-    const res = await fetch(GAS_URL + "?action=getDashboardData");
+    console.log("getting data from server for month: ", month);
+    const data = await getDashboardDataFromServer(month);
 
-    const response = await res.json();
-
-    if (!response.success) {
-      throw new Error(response.error || "Failed to refresh dashboard");
-    }
-
-    setDashboardValues(response.data);
+    setDashboardValues(data);
 
     showStatus("Dashboard updated");
+    delete dashboardCache[month];
+    dashboardCache[month] = data;
+    saveDashboardCache();
   } catch (err) {
     showStatus(err.message, true);
+    console.log("error refreshdashboard(): ", err);
   } finally {
     icon.classList.remove("dashboard-syncing");
+    setDashboardLoading(false);
   }
 }
 
 export function initDashboard() {
+  loadDashboardCache();
+  refreshDashboard(getCurrentMonthName());
+  selectedMonth = getCurrentMonthName();
   document
     .getElementById("dashboardRefreshFab")
-    .addEventListener("click", refreshDashboard);
+    .addEventListener("click", () => {
+      refreshDashboard(selectedMonth);
+    });
+
+  const dashboardMonth = document.getElementById("dashboardMonth");
+
+  dashboardMonth.addEventListener("change", (event) => {
+    const date = new Date(`${event.target.value}-01`);
+
+    const monthName = date.toLocaleString("en-US", {
+      month: "long",
+    });
+
+    if (selectedMonth === monthName) return;
+
+    selectedMonth = monthName;
+
+    console.log(monthName);
+    loadDashboard(monthName);
+  });
 }
 
 export const dashboard = {
   onEnter() {
     console.log("Entered dashboard");
 
-    loadDashboard();
+    loadDashboard(selectedMonth);
   },
 };

@@ -1092,6 +1092,37 @@
 
         max-width: 350px;
       }
+
+      .month-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        width: fit-content;
+
+        padding: 0.3rem 1rem;
+
+        background: white;
+
+        border: 1px solid #d1d5db;
+        border-radius: 999px;
+
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+
+      .month-chip input[type="month"] {
+        border: none;
+        outline: none;
+
+        background: transparent;
+
+        font-size: 0.7rem;
+        font-weight: 500;
+
+        color: #374151;
+
+        cursor: pointer;
+      }
     </style>
   </head>
 
@@ -1149,6 +1180,10 @@
           <div class="card">
             <div class="label">Gross Profit</div>
             <div class="value" id="grossProfit">₹--</div>
+          </div>
+
+          <div class="month-chip">
+            <input id="dashboardMonth" type="month" value="2026-06" />
           </div>
 
           <div id="dashboardRefreshFab" class="dashboard-fab">
