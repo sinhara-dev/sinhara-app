@@ -55,6 +55,10 @@ export function getUser() {
   return payload?.email ? payload : null;
 }
 
+export function userLoggedIn() {
+  return getUser() != null;
+}
+
 export async function checkAuth() {
   const user = getUser();
   if (!user) return false;

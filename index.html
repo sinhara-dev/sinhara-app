@@ -46,15 +46,6 @@
         margin-bottom: 1.5rem;
       }
 
-      #loginScreen {
-        height: 100vh;
-        display: none;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 16px;
-      }
-
       #appScreen {
         display: none;
       }
@@ -1029,6 +1020,73 @@
 
         color: #555;
       }
+
+      #loginScreen {
+        /* min-height: 60dvh; */
+        /* height: 100dvh; */
+        min-height: 80dvh;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      #signInText {
+        font-size: 1.3rem;
+        font-weight: bold;
+      }
+
+      .access-denied {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        text-align: center;
+      }
+
+      .access-denied-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .access-denied-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #374151;
+
+        margin-bottom: 0.5rem;
+      }
+
+      .access-denied-message {
+        font-size: 0.9rem;
+        color: #6b7280;
+
+        max-width: 300px;
+        line-height: 1.5;
+      }
+
+      .access-denied > * {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .access-denied::before {
+        content: "";
+      }
+
+      .access-denied-card {
+        background: white;
+        padding: 2rem;
+
+        border-radius: 1rem;
+        border: 1px solid #e5e7eb;
+
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+        max-width: 350px;
+      }
     </style>
   </head>
 
@@ -1036,8 +1094,22 @@
     <div id="statusMessage"></div>
 
     <div id="loginScreen">
-      <h2>Sign in to continue</h2>
+      <div id="viewAccessDenied" class="access-denied">
+        <div class="access-denied-card">
+          <div class="access-denied-icon">🔒</div>
+          <div class="access-denied-title">Access Denied</div>
+          <div class="access-denied-message">
+            You don't have permission to view this page.
+          </div>
+        </div>
+      </div>
+
+      <div id="signInText">Sign in to continue</div>
       <div id="googleButton"></div>
+    </div>
+
+    <div id="loadingSpinner">
+      <div class="spinner"></div>
     </div>
 
     <div id="appScreen" style="display: none">
@@ -1278,10 +1350,6 @@
 
           <div id="actionModalBody"></div>
         </div>
-      </div>
-
-      <div id="loadingSpinner">
-        <div class="spinner"></div>
       </div>
     </div>
     <script type="module" src="main.js"></script>
