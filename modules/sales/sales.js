@@ -1,6 +1,6 @@
 import { GAS_URL } from "../../config.js";
 import { showStatus } from "../../utils/status.js";
-import { getCurrentMonthName } from "../../utils/utils.js";
+import { formatDateMonthDay, getCurrentMonthName } from "../../utils/utils.js";
 import { openMonthPicker } from "../../shared/monthPicker.js";
 
 let salesCache = {};
@@ -57,36 +57,37 @@ function renderSalesList(rows) {
     const col1 = document.createElement("div");
     col1.className = "col-info";
 
-    const date = document.createElement("div");
-    date.className = "sales-date";
-    date.textContent = r.date;
-
     const amount = document.createElement("div");
     amount.className = "sales-amount";
     amount.textContent = `₹${Number(r.total).toLocaleString("en-IN")}`;
 
-    col1.appendChild(date);
-    col1.appendChild(amount);
+    const profit = document.createElement("div");
+    profit.className = "sales-profit";
+    profit.textContent = `₹${Number(r.profit).toLocaleString("en-IN")}`;
 
-    // ---------- column 3 (qty + profit) ----------
+    col1.appendChild(amount);
+    col1.appendChild(profit);
+
+    // ---------- column 3 (date + qty + soldBy) ----------
     const col2 = document.createElement("div");
     col2.className = "col-info";
+
+    const date = document.createElement("div");
+    date.className = "sales-date";
+    date.textContent = formatDateMonthDay(r.date);
 
     const qty = document.createElement("div");
     qty.className = "sales-date";
     qty.textContent = r.quantity;
 
-    const profit = document.createElement("div");
-    profit.className = "sales-amount";
-    profit.textContent = `₹${Number(r.profit).toLocaleString("en-IN")}`;
-
-    col2.appendChild(qty);
-    col2.appendChild(profit);
-
-    // ---------- column 4 (team) ----------
     const team = document.createElement("div");
-    team.className = "sales-team";
+    const teamClass = r.soldBy.toLowerCase().replace(/\s+/g, "-");
+    team.className = `sales-team ${teamClass}`;
     team.textContent = r.soldBy;
+
+    col2.appendChild(date);
+    col2.appendChild(qty);
+    col2.appendChild(team);
 
     // ---------- product name ----------
     const name = document.createElement("div");
@@ -97,7 +98,6 @@ function renderSalesList(rows) {
     topRow.appendChild(colImg);
     topRow.appendChild(col1);
     topRow.appendChild(col2);
-    topRow.appendChild(team);
 
     card.appendChild(topRow);
     card.appendChild(name);
