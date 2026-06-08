@@ -49,9 +49,13 @@ function renderSalesList(rows) {
 
     colImg.appendChild(img);
 
-    // ---------- column 2 (date + amount) ----------
+    // ---------- column 2 (amount + quantity + sold amount + profit) ----------
     const col1 = document.createElement("div");
     col1.className = "col-info";
+
+    const originalAmountQty = document.createElement("div");
+    originalAmountQty.className = "sales-original-amount";
+    originalAmountQty.textContent = `${r.amount} x ${r.quantity}`;
 
     const amount = document.createElement("div");
     amount.className = "sales-amount";
@@ -61,10 +65,11 @@ function renderSalesList(rows) {
     profit.className = "sales-profit";
     profit.textContent = `₹${Number(r.profit).toLocaleString("en-IN")}`;
 
+    col1.appendChild(originalAmountQty);
     col1.appendChild(amount);
     col1.appendChild(profit);
 
-    // ---------- column 3 (date + qty + soldBy) ----------
+    // ---------- column 3 (date + soldBy) ----------
     const col2 = document.createElement("div");
     col2.className = "col-info";
 
@@ -72,9 +77,9 @@ function renderSalesList(rows) {
     date.className = "sales-date";
     date.textContent = formatDateMonthDay(r.date);
 
-    const qty = document.createElement("div");
-    qty.className = "sales-date";
-    qty.textContent = r.quantity;
+    const expense = document.createElement("div");
+    expense.className = "sales-date";
+    expense.textContent = `₹${Number(r.productExpense).toLocaleString("en-IN")}`;
 
     const team = document.createElement("div");
     const teamClass = r.soldBy.toLowerCase().replace(/\s+/g, "-");
@@ -82,7 +87,7 @@ function renderSalesList(rows) {
     team.textContent = r.soldBy;
 
     col2.appendChild(date);
-    col2.appendChild(qty);
+    col2.appendChild(expense);
     col2.appendChild(team);
 
     // ---------- product name ----------
