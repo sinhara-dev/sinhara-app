@@ -29,7 +29,21 @@ function renderSalesList(rows) {
 
   container.innerHTML = "";
 
+  let totalSales = 0;
+  let totalAfterCommission = 0;
+  let totalSalesProfit = 0;
+
   rows.forEach((r) => {
+    const total = Number(Number(r.amount) * Number(r.quantity));
+    const afterCommission = Number(total * (1 - Number(r.commission)));
+    const salesProfit = Number(
+      afterCommission - Number(r.productExpense) * Number(r.quantity),
+    );
+
+    totalSales += total;
+    totalAfterCommission += afterCommission;
+    totalSalesProfit += salesProfit;
+
     const card = document.createElement("div");
     card.className = "sales-card";
 
@@ -59,11 +73,11 @@ function renderSalesList(rows) {
 
     const amount = document.createElement("div");
     amount.className = "sales-amount";
-    amount.textContent = `₹${Number(r.total).toLocaleString("en-IN")}`;
+    amount.textContent = `₹${total.toLocaleString("en-IN")}`;
 
     const profit = document.createElement("div");
     profit.className = "sales-profit";
-    profit.textContent = `₹${Number(r.profit).toLocaleString("en-IN")}`;
+    profit.textContent = `₹${salesProfit.toLocaleString("en-IN")}`;
 
     col1.appendChild(originalAmountQty);
     col1.appendChild(amount);
@@ -105,17 +119,19 @@ function renderSalesList(rows) {
 
     container.appendChild(card);
   });
+
+  updateSalesHeader(totalSales, totalAfterCommission, totalSalesProfit);
 }
 
-function updateSalesHeader(data) {
+function updateSalesHeader(totalSales, totalAfterCommission, totalSalesProfit) {
   document.getElementById("salesTotal").innerText =
-    "₹" + Number(data.totalSales).toLocaleString("en-IN");
+    "₹" + Number(totalSales).toLocaleString("en-IN");
 
   document.getElementById("salesCommission").innerText =
-    "₹" + Number(data.totalCommission).toLocaleString("en-IN");
+    "₹" + Number(totalAfterCommission).toLocaleString("en-IN");
 
   document.getElementById("salesProfit").innerText =
-    "₹" + Number(data.totalProfit).toLocaleString("en-IN");
+    "₹" + Number(totalSalesProfit).toLocaleString("en-IN");
 }
 
 function showSalesLoading() {
@@ -153,10 +169,7 @@ function hideSalesLoading() {
 
 async function loadSalesData(month) {
   if (salesCache[month]) {
-    updateSalesHeader(salesCache[month].summary);
-
     renderSalesList(salesCache[month].list);
-
     return;
   }
 
@@ -173,9 +186,9 @@ async function loadSalesData(month) {
       throw new Error(response.error);
     }
 
-    updateSalesHeader(response.data.summary);
     renderSalesList(response.data.list);
 
+    delete salesCache[month];
     salesCache[month] = response.data;
   } catch (err) {
     showStatus(err.message, true);

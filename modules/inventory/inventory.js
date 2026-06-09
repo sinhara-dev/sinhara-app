@@ -48,14 +48,19 @@ function openSoldDialog(event, productId) {
 
   const name = document.createElement("div");
   name.textContent = product.name;
-  name.style.fontSize = "1rem";
+  name.style.fontSize = "0.8rem";
   name.style.fontWeight = "bold";
 
   const price = document.createElement("div");
   price.textContent = `₹${formatAmount(product.amount)}`;
+  price.style.marginTop = "0.2rem";
+  price.style.marginBottom = "0.2rem";
+  price.style.fontSize = "0.7rem";
+  price.style.fontWeight = "bold";
 
   const stock = document.createElement("div");
   stock.textContent = `Current Stock: ${product.quantity}`;
+  stock.style.fontSize = "0.7rem";
 
   info.appendChild(name);
   info.appendChild(price);
@@ -81,10 +86,63 @@ function openSoldDialog(event, productId) {
   const teamSelect = document.createElement("select");
   teamSelect.id = "soldMarketingTeam";
 
-  MARKETING_TEAMS.forEach((team) => {
+  Object.keys(MARKETING_TEAMS).forEach((team) => {
     const option = document.createElement("option");
+    option.value = team;
     option.textContent = team;
     teamSelect.appendChild(option);
+  });
+
+  // ---------- other team fields ----------
+  const otherContainer = document.createElement("div");
+  otherContainer.style.display = "none";
+  otherContainer.style.marginTop = "0.5rem";
+
+  const otherNameLabel = document.createElement("label");
+  otherNameLabel.textContent = "Marketing Team Name";
+
+  const otherNameInput = document.createElement("input");
+  otherNameInput.type = "text";
+  otherNameInput.id = "soldOtherName";
+
+  const percentageLabel = document.createElement("label");
+  percentageLabel.textContent = "Percentage";
+
+  const percentageWrapper = document.createElement("div");
+  percentageWrapper.style.position = "relative";
+
+  const percentageInput = document.createElement("input");
+  percentageInput.id = "soldOtherPercentage";
+  percentageInput.type = "number";
+  percentageInput.style.paddingRight = "2rem";
+  percentageInput.min = "0";
+  percentageInput.max = "100";
+  percentageInput.value = "40";
+
+  const percentSign = document.createElement("span");
+  percentSign.textContent = "%";
+  percentSign.style.position = "absolute";
+  percentSign.style.right = "0.75rem";
+  percentSign.style.top = "50%";
+  percentSign.style.transform = "translateY(-50%)";
+
+  percentageWrapper.appendChild(percentageInput);
+  percentageWrapper.appendChild(percentSign);
+
+  otherContainer.appendChild(otherNameLabel);
+  otherContainer.appendChild(otherNameInput);
+  otherContainer.appendChild(percentageLabel);
+  otherContainer.appendChild(percentageWrapper);
+
+  teamSelect.addEventListener("change", () => {
+    const isOther = teamSelect.value === "Other";
+
+    otherContainer.style.display = isOther ? "block" : "none";
+
+    if (!isOther) {
+      otherNameInput.value = "";
+      percentageInput.value = "40";
+    }
   });
 
   // ---------- date ----------
@@ -107,12 +165,13 @@ function openSoldDialog(event, productId) {
 
   // ---------- assemble ----------
   container.appendChild(header);
+  container.appendChild(dateLabel);
+  container.appendChild(dateInput);
   container.appendChild(qtyLabel);
   container.appendChild(qtyInput);
   container.appendChild(teamLabel);
   container.appendChild(teamSelect);
-  container.appendChild(dateLabel);
-  container.appendChild(dateInput);
+  container.appendChild(otherContainer);
   container.appendChild(btn);
 
   openActionModal("Record Sale", container);
@@ -195,7 +254,24 @@ function openStockDialog(event, productId) {
 async function submitSale(productId) {
   const quantity = Number(document.getElementById("soldQuantity").value);
 
+  // eslint-disable-next-line no-useless-assignment
+  let marketingTeam = "";
   const team = document.getElementById("soldMarketingTeam").value;
+
+  if (team === "Other") {
+    marketingTeam = document.getElementById("soldOtherName").value;
+    if (marketingTeam === "") {
+      showStatus("Marketing team name is required", true);
+      return;
+    }
+  } else {
+    marketingTeam = team;
+  }
+
+  const commission =
+    team === "Other"
+      ? Number(document.getElementById("soldOtherPercentage").value) / 100
+      : MARKETING_TEAMS[team];
 
   const date = document.getElementById("soldDate").value;
 
@@ -212,7 +288,8 @@ async function submitSale(productId) {
         action: "recordSale",
         productId,
         quantity,
-        marketingTeam: team,
+        marketingTeam: marketingTeam,
+        commission,
         saleDate: date,
       }),
     });
