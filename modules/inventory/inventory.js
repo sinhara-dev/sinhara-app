@@ -371,7 +371,6 @@ function renderProducts(products) {
   const gallery = document.getElementById("inventory_product_gallery");
 
   if (!gallery) {
-    console.error("Gallery not found");
     return;
   }
 
@@ -498,7 +497,6 @@ async function refreshProducts() {
   setSyncing(true);
 
   try {
-    console.log("Fetching products from server...");
     const res = await fetch(GAS_URL + "?action=getInventoryProducts");
 
     const response = await res.json();
@@ -524,13 +522,11 @@ function renderCachedProducts() {
   const cached = localStorage.getItem("inventoryProducts");
 
   if (cached) {
-    console.log("Rendering products from cache");
     renderProducts(JSON.parse(cached));
     updateInventoryHeader(JSON.parse(cached));
     return;
   }
 
-  console.log("No cached products found, fetching from server");
   refreshProducts();
 }
 
@@ -675,7 +671,6 @@ export function initInventory() {
 
 export const inventory = {
   onEnter: () => {
-    console.log("Entered Inventory tab");
     renderCachedProducts();
   },
 };

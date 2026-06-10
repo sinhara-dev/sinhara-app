@@ -25,12 +25,10 @@ export function parseJwt(token) {
 
 export async function isAuthorized(email) {
   try {
-    console.log("Validating stored token for user:", email);
     const res = await fetch(
       GAS_URL + "?action=validateUser&email=" + encodeURIComponent(email),
     );
     const response = await res.json();
-    console.log("Validation response:", response);
     if (!response.success) {
       throw new Error(response.error || "Failed to validate user");
     }
@@ -41,7 +39,6 @@ export async function isAuthorized(email) {
       throw new Error("Access denied");
     }
   } catch (e) {
-    console.log("Error during token validation:", e.message);
     showStatus(e.message, true);
     return false;
   }

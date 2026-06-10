@@ -6,8 +6,6 @@ let gisInitialized = false;
 let gisRendered = false;
 
 function handleCredentialResponse(response) {
-  console.log("handleCredentialResponse called");
-
   // store real session token
   localStorage.setItem("google_token", response.credential);
 
@@ -39,7 +37,6 @@ function renderLoginUI() {
 }
 
 export async function showLogin() {
-  console.log("Initializing google login");
   initGoogle();
   renderLoginUI();
 

@@ -7,12 +7,10 @@ import { initSales } from "../modules/sales/sales.js";
 let activeTab = null;
 
 export const switchTab = (tab) => {
-  console.log("Switching to tab:", tab);
   if (activeTab === tab) return;
 
   const route = routes[tab];
   if (!route) {
-    console.error(`Route for tab '${tab}' not found`);
     return;
   }
 

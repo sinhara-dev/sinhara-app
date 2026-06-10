@@ -158,7 +158,6 @@ export function initExpense() {
     .getElementById("month-picker-open-btn-expense")
     .addEventListener("click", () => {
       openMonthPicker((month) => {
-        console.log("Selected month (callback):", month);
         document.getElementById("selectedMonthLabel").innerText = month;
         loadExpenseHeader(month);
       });
@@ -210,7 +209,6 @@ function updateExpenseHeader(data) {
   const opEl = document.getElementById("expenseOperational");
 
   if (!totalEl || !productEl || !opEl) {
-    console.error("Expense header DOM missing");
     return;
   }
 

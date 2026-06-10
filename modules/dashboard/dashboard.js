@@ -87,7 +87,6 @@ async function loadDashboard(month) {
 }
 
 async function refreshDashboard(month) {
-  console.log("refreshdashboard called");
   setDashboardLoading(true);
 
   const icon = document.getElementById("dashboardRefreshIcon");
@@ -95,7 +94,6 @@ async function refreshDashboard(month) {
   icon.classList.add("dashboard-syncing");
 
   try {
-    console.log("getting data from server for month: ", month);
     const data = await getDashboardDataFromServer(month);
 
     setDashboardValues(data);
@@ -106,7 +104,6 @@ async function refreshDashboard(month) {
     saveDashboardCache();
   } catch (err) {
     showStatus(err.message, true);
-    console.log("error refreshdashboard(): ", err);
   } finally {
     icon.classList.remove("dashboard-syncing");
     setDashboardLoading(false);
@@ -136,15 +133,12 @@ export function initDashboard() {
 
     selectedMonth = monthName;
 
-    console.log(monthName);
     loadDashboard(monthName);
   });
 }
 
 export const dashboard = {
   onEnter() {
-    console.log("Entered dashboard");
-
     loadDashboard(selectedMonth);
   },
 };
