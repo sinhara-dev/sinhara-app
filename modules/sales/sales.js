@@ -78,7 +78,7 @@ function renderSalesList(rows) {
 
     const originalAmountQty = document.createElement("div");
     originalAmountQty.className = "sales-original-amount";
-    originalAmountQty.textContent = `${r.amount} x ${r.quantity}`;
+    originalAmountQty.textContent = `₹${Number(r.amount).toLocaleString("en-IN")} x ${r.quantity}`;
 
     const amount = document.createElement("div");
     amount.className = "sales-amount";
