@@ -1134,6 +1134,27 @@
 
         cursor: pointer;
       }
+
+      .month-chip.expense {
+        margin-top: 0.2rem;
+        display: flex;
+        width: fit-content;
+        margin: 0.2rem auto 0;
+        justify-content: center;
+        align-items: center;
+        background: #eff6ff;
+        border-color: #bfdbfe;
+      }
+
+      #expenseMonthPicker {
+        font-size: 0.6rem;
+        padding: 0.1rem 1rem;
+      }
+
+      #salesMonthPicker {
+        font-size: 0.6rem;
+        padding: 0.1rem 1rem;
+      }
     </style>
   </head>
 
@@ -1317,10 +1338,8 @@
           </div>
         </div>
 
-        <div class="month-picker-container">
-          <button id="month-picker-open-btn-expense" class="month-btn">
-            📅 <span id="selectedMonthLabel">June</span>
-          </button>
+        <div class="month-chip expense">
+          <input id="expenseMonthPicker" type="month" />
         </div>
 
         <div id="expense-status-message"></div>
@@ -1348,43 +1367,11 @@
           </div>
         </div>
 
-        <div class="month-picker-container">
-          <button id="month-picker-open-btn-sales" class="month-btn">
-            📅 <span id="selectedMonthLabelSales">June</span>
-          </button>
+        <div class="month-chip expense">
+          <input id="salesMonthPicker" type="month" value="2026-06" />
         </div>
 
         <div id="salesList"></div>
-      </div>
-
-      <div id="monthModal" class="action-modal" style="display: none">
-        <div class="action-modal-content">
-          <div class="action-modal-header">
-            <h3>Select Month</h3>
-            <button id="month-picker-close-btn" class="modal-close-btn">
-              ✕
-            </button>
-          </div>
-
-          <select id="monthSelect">
-            <option>January</option>
-            <option>February</option>
-            <option>March</option>
-            <option>April</option>
-            <option>May</option>
-            <option>June</option>
-            <option>July</option>
-            <option>August</option>
-            <option>September</option>
-            <option>October</option>
-            <option>November</option>
-            <option>December</option>
-          </select>
-
-          <button id="month-picker-apply-btn" style="margin-top: 1rem">
-            APPLY
-          </button>
-        </div>
       </div>
 
       <div id="imagePreviewOverlay">

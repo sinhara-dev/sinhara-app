@@ -3,9 +3,9 @@ import { showStatus } from "../../utils/status.js";
 import { formatDateMonthDay, getCurrentMonthName } from "../../utils/utils.js";
 import { formatAmount } from "../../utils/utils.js";
 import { openActionModal, closeActionModal } from "../../utils/modal.js";
-import { openMonthPicker } from "../../shared/monthPicker.js";
 
 const expenseCache = {};
+let selectedMonth = "";
 
 function showStatusMessage(message) {
   const statusDiv = document.getElementById("expense-status-message");
@@ -154,37 +154,42 @@ export function initExpense() {
     .getElementById("expenseFab")
     .addEventListener("click", openAddExpense);
 
-  document
-    .getElementById("month-picker-open-btn-expense")
-    .addEventListener("click", () => {
-      openMonthPicker((month) => {
-        document.getElementById("selectedMonthLabel").innerText = month;
-        loadExpenseHeader(month);
-      });
+  selectedMonth = getCurrentMonthName();
+  const monthPicker = document.getElementById("expenseMonthPicker");
+
+  monthPicker.value = new Date().toISOString().slice(0, 7);
+
+  monthPicker.addEventListener("change", (event) => {
+    const date = new Date(`${event.target.value}-01`);
+
+    const monthName = date.toLocaleString("en-US", {
+      month: "long",
     });
+
+    if (selectedMonth === monthName) return;
+
+    selectedMonth = monthName;
+
+    loadExpenseHeader(monthName);
+  });
 }
 
-function setExpenseLoading(isLoading) {
+function setExpenseLoading() {
   const ids = ["expenseTotal", "expenseProductCost", "expenseOperational"];
 
   ids.forEach((id) => {
     const el = document.getElementById(id);
     if (!el) return;
 
-    if (isLoading) {
-      el.classList.add("skeleton");
-      el.textContent = "██████";
-    } else {
-      el.classList.remove("skeleton");
-    }
+    el.classList.add("skeleton");
+    el.textContent = "██████";
   });
 
   const list = document.getElementById("expenseList");
 
   if (!list) return;
 
-  if (isLoading) {
-    list.innerHTML = `
+  list.innerHTML = `
       <div class="expense-skeleton">
         <div class="skeleton-line"></div>
         <div class="skeleton-line short"></div>
@@ -198,7 +203,24 @@ function setExpenseLoading(isLoading) {
         <div class="skeleton-line short"></div>
       </div>
     `;
-  }
+}
+
+function hideExpenseLoading() {
+  document.getElementById("expenseTotal").classList.remove("skeleton");
+
+  document.getElementById("expenseProductCost").classList.remove("skeleton");
+
+  document.getElementById("expenseOperational").classList.remove("skeleton");
+}
+
+function clearExpenseHeaderAndList() {
+  const container = document.getElementById("expenseList");
+  if (!container) return;
+  container.innerHTML = "";
+
+  document.getElementById("expenseTotal").innerText = "₹--";
+  document.getElementById("expenseProductCost").innerText = "₹--";
+  document.getElementById("expenseOperational").innerText = "₹--";
 }
 
 function updateExpenseHeader(data) {
@@ -338,14 +360,13 @@ function renderExpenseList(rows) {
 // }
 
 async function loadExpenseHeader(month) {
-  setExpenseLoading(true);
-
   if (expenseCache[month]) {
     updateExpenseHeader(expenseCache[month].summary);
     renderExpenseList(expenseCache[month].list);
-    setExpenseLoading(false);
     return;
   }
+
+  setExpenseLoading();
 
   try {
     const res = await fetch(
@@ -363,16 +384,17 @@ async function loadExpenseHeader(month) {
 
     const data = response.data;
 
-    setExpenseLoading(false);
+    hideExpenseLoading();
 
     updateExpenseHeader(data.summary);
     renderExpenseList(data.list);
 
     expenseCache[month] = data;
   } catch (err) {
-    setExpenseLoading(false);
-
+    clearExpenseHeaderAndList();
     showStatus(err.message, true);
+  } finally {
+    hideExpenseLoading();
   }
 }
 

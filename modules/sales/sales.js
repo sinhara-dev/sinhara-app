@@ -1,19 +1,28 @@
 import { GAS_URL } from "../../config.js";
 import { showStatus } from "../../utils/status.js";
 import { formatDateMonthDay, getCurrentMonthName } from "../../utils/utils.js";
-import { openMonthPicker } from "../../shared/monthPicker.js";
 
 export const salesCache = {};
+let selectedMonth = "";
 
 export function initSales() {
-  document
-    .getElementById("month-picker-open-btn-sales")
-    .addEventListener("click", () => {
-      openMonthPicker((month) => {
-        document.getElementById("selectedMonthLabelSales").innerText = month;
-        loadSalesData(month);
-      });
+  selectedMonth = getCurrentMonthName();
+  const monthPicker = document.getElementById("salesMonthPicker");
+  monthPicker.value = new Date().toISOString().slice(0, 7);
+
+  monthPicker.addEventListener("change", (event) => {
+    const date = new Date(`${event.target.value}-01`);
+
+    const monthName = date.toLocaleString("en-US", {
+      month: "long",
     });
+
+    if (selectedMonth === monthName) return;
+
+    selectedMonth = monthName;
+
+    loadSalesData(monthName);
+  });
 }
 
 function showImagePreview(imageUrl) {
@@ -167,6 +176,16 @@ function hideSalesLoading() {
   document.getElementById("salesProfit").classList.remove("skeleton");
 }
 
+function clearSalesHeaderAndList() {
+  const container = document.getElementById("salesList");
+  if (!container) return;
+  container.innerHTML = "";
+
+  document.getElementById("salesTotal").innerText = "₹--";
+  document.getElementById("salesCommission").innerText = "₹--";
+  document.getElementById("salesProfit").innerText = "₹--";
+}
+
 async function loadSalesData(month) {
   if (salesCache[month]) {
     renderSalesList(salesCache[month].list);
@@ -191,8 +210,11 @@ async function loadSalesData(month) {
     delete salesCache[month];
     salesCache[month] = response.data;
   } catch (err) {
+    clearSalesHeaderAndList();
+
     showStatus(err.message, true);
   } finally {
+    console.log("calling hideSalesLoading() from finally");
     hideSalesLoading();
   }
 }

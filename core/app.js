@@ -1,6 +1,5 @@
 import { checkAuth, userLoggedIn } from "./auth.js";
 import { showLogin } from "../modules/login/login.js";
-import { initMonthPicker } from "../shared/monthPicker.js";
 import { initRouter } from "./router.js";
 
 function showApp() {
@@ -45,5 +44,4 @@ export async function startApplication() {
   hideAccessDenied();
   showApp();
   initRouter();
-  initMonthPicker();
 }
