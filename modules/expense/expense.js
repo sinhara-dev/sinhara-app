@@ -31,8 +31,23 @@ async function submitExpense() {
 
   const month = new Date(date).toLocaleString("en-US", { month: "long" });
 
-  if (!date || !item || !amount || amount <= 0 || !type) {
-    showStatus("Fill all fields properly", true);
+  if (!date) {
+    showStatus("Please select a valid date");
+    return;
+  }
+
+  if (!item) {
+    showStatus("Please add valid item name");
+    return;
+  }
+
+  if (!amount || amount <= 0) {
+    showStatus("Please choose valid amount");
+    return;
+  }
+
+  if (!type) {
+    showStatus("Please choose availale type");
     return;
   }
 

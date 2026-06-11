@@ -49,12 +49,12 @@ function initTabListeners() {
     .addEventListener("click", () => switchTab("inventory"));
 
   document
-    .getElementById("tab-expenses")
-    .addEventListener("click", () => switchTab("expense"));
-
-  document
     .getElementById("tab-sales")
     .addEventListener("click", () => switchTab("sales"));
+
+  document
+    .getElementById("tab-expenses")
+    .addEventListener("click", () => switchTab("expense"));
 }
 
 export function initRouter() {
@@ -62,8 +62,8 @@ export function initRouter() {
 
   initDashboard();
   initInventory();
-  initExpense();
   initSales();
+  initExpense();
 
   switchTab("home");
 }

@@ -5,19 +5,19 @@ import { sales } from "../modules/sales/sales.js";
 
 export const routes = {
   home: {
-    viewId: "viewDashboard",
+    viewId: "dashboardView",
     onEnter: () => dashboard.onEnter(),
   },
   inventory: {
-    viewId: "viewInventory",
+    viewId: "inventoryView",
     onEnter: () => inventory.onEnter(),
-  },
-  expense: {
-    viewId: "expensesView",
-    onEnter: () => expense.onEnter(),
   },
   sales: {
     viewId: "salesView",
     onEnter: () => sales.onEnter(),
+  },
+  expense: {
+    viewId: "expenseView",
+    onEnter: () => expense.onEnter(),
   },
 };

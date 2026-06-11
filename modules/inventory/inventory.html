@@ -1,0 +1,84 @@
+<div class="inventory">
+  <div class="inventory-header">
+    <div class="header-item">
+      <div class="label">Products</div>
+      <div class="value" id="totalProducts">--</div>
+    </div>
+
+    <div class="header-item">
+      <div class="label">Total Value</div>
+      <div class="value" id="totalValue">₹--</div>
+    </div>
+
+    <button id="syncBtn">
+      <span id="syncIcon">↻</span>
+    </button>
+  </div>
+  <div id="inventory-status-message"></div>
+  <div id="inventory_product_gallery"></div>
+  <div id="inventory_add_new_product_fab" class="fab">+</div>
+
+  <div
+    id="inventory_add_new_product"
+    class="form-container"
+    style="display: none"
+  >
+    <div style="display: flex; justify-content: flex-end; align-items: center">
+      <button
+        id="inventory_add_new_product_btn_close"
+        style="
+          width: auto;
+          background: #ff4d4d;
+          padding: 0.4rem 0.7rem;
+          border-radius: 0.4rem;
+        "
+      >
+        ✕
+      </button>
+    </div>
+
+    <div class="form-fields">
+      <label>Product Name</label>
+      <input
+        id="inventory_add_new_product_name"
+        type="text"
+        placeholder="Product Name"
+      />
+
+      <label>Amount (₹)</label>
+      <input
+        id="inventory_add_new_product_amount"
+        type="number"
+        placeholder="Amount (₹)"
+      />
+
+      <label>Manufacturing Cost (₹)</label>
+      <input
+        id="inventory_add_new_product_manufacturing_cost"
+        type="number"
+        placeholder="Manufacturing Cost (₹)"
+        min="1"
+        value="300"
+      />
+
+      <label>Stock Quantity</label>
+      <input
+        id="inventory_add_new_product_quantity"
+        type="number"
+        min="1"
+        value="1"
+      />
+
+      <label>Photo</label>
+      <input
+        id="inventory_add_new_product_photo"
+        type="file"
+        accept="image/*"
+      />
+    </div>
+
+    <button id="inventory_add_new_product_btn_submit" class="submit-button">
+      SUBMIT
+    </button>
+  </div>
+</div>

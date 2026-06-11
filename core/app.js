@@ -29,11 +29,28 @@ function hideLoader() {
   document.getElementById("loadingSpinner").style.display = "none";
 }
 
+async function loadView(viewName) {
+  const response = await fetch(`modules/${viewName}/${viewName}.html`);
+  const html = await response.text();
+
+  document.getElementById(`${viewName}View`).innerHTML = html;
+}
+
+async function loadPages() {
+  await Promise.all([
+    loadView("dashboard"),
+    loadView("inventory"),
+    loadView("sales"),
+    loadView("expense"),
+  ]);
+}
+
 export async function startApplication() {
   showLoader();
   const authenticated = await checkAuth();
-  hideLoader();
+
   if (!authenticated) {
+    hideLoader();
     if (userLoggedIn()) {
       showAccessDenied();
     }
@@ -42,6 +59,8 @@ export async function startApplication() {
   }
 
   hideAccessDenied();
+  await loadPages();
+  hideLoader();
   showApp();
   initRouter();
 }
