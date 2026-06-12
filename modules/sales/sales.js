@@ -1,4 +1,4 @@
-import { GAS_URL } from "../../config.js";
+import { http } from "../../services/http.js";
 import { showStatus } from "../../utils/status.js";
 import { formatDateMonthDay, getCurrentMonthName } from "../../utils/utils.js";
 
@@ -195,9 +195,11 @@ async function loadSalesData(month) {
   showSalesLoading();
 
   try {
-    const res = await fetch(
-      `${GAS_URL}?action=getSalesSummary&month=${encodeURIComponent(month)}`,
-    );
+    // const res = await fetch(
+    //   `${GAS_URL}?action=getSalesSummary&month=${encodeURIComponent(month)}`,
+    // );
+
+    const res = await http.Get("getSalesSummary", { month });
 
     const response = await res.json();
 
@@ -214,7 +216,6 @@ async function loadSalesData(month) {
 
     showStatus(err.message, true);
   } finally {
-    console.log("calling hideSalesLoading() from finally");
     hideSalesLoading();
   }
 }

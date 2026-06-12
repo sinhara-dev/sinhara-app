@@ -1,10 +1,10 @@
-import { GAS_URL } from "../../config.js";
 import { showStatus } from "../../utils/status.js";
 import { formatAmount, getMonthNameFromDate } from "../../utils/utils.js";
 import { MARKETING_TEAMS } from "../../config.js";
 import { openActionModal, closeActionModal } from "../../utils/modal.js";
 import { salesCache } from "../sales/sales.js";
 import { dashboardCache } from "../dashboard/dashboard.js";
+import { http } from "../../services/http.js";
 
 let productsCache = [];
 
@@ -282,16 +282,24 @@ async function submitSale(productId) {
   loader.style.display = "flex";
 
   try {
-    const res = await fetch(GAS_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "recordSale",
-        productId,
-        quantity,
-        marketingTeam: marketingTeam,
-        commission,
-        saleDate: date,
-      }),
+    // const res = await fetch(GAS_URL, {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     action: "recordSale",
+    //     productId,
+    //     quantity,
+    //     marketingTeam: marketingTeam,
+    //     commission,
+    //     saleDate: date,
+    //   }),
+    // });
+
+    const res = await http.Post("recordSale", {
+      productId,
+      quantity,
+      marketingTeam: marketingTeam,
+      commission,
+      saleDate: date,
     });
 
     const response = await res.json();
@@ -324,13 +332,18 @@ async function submitStockUpdate(productId) {
   loader.style.display = "flex";
 
   try {
-    const res = await fetch(GAS_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "updateInventoryStock",
-        productId,
-        quantityToAdd: quantity,
-      }),
+    // const res = await fetch(GAS_URL, {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     action: "updateInventoryStock",
+    //     productId,
+    //     quantityToAdd: quantity,
+    //   }),
+    // });
+
+    const res = await http.Post("updateInventoryStock", {
+      productId,
+      quantityToAdd: quantity,
     });
 
     const response = await res.json();
@@ -497,7 +510,8 @@ async function refreshProducts() {
   setSyncing(true);
 
   try {
-    const res = await fetch(GAS_URL + "?action=getInventoryProducts");
+    // const res = await fetch(GAS_URL + "?action=getInventoryProducts");
+    const res = await http.Get("getInventoryProducts");
 
     const response = await res.json();
 
@@ -615,17 +629,26 @@ async function updateInventoryAddNewProduct() {
       reader.readAsDataURL(file);
     });
 
-    const res = await fetch(GAS_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "addNewProduct",
-        productName,
-        amount,
-        expense,
-        quantity,
-        base64Data: base64,
-        mimeType: file.type,
-      }),
+    // const res = await fetch(GAS_URL, {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     action: "addNewProduct",
+    //     productName,
+    //     amount,
+    //     expense,
+    //     quantity,
+    //     base64Data: base64,
+    //     mimeType: file.type,
+    //   }),
+    // });
+
+    const res = await http.Post("addNewProduct", {
+      productName,
+      amount,
+      expense,
+      quantity,
+      base64Data: base64,
+      mimeType: file.type,
     });
 
     const response = await res.json();

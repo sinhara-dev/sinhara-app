@@ -1,12 +1,13 @@
 /* global google */
 
 import { startApplication } from "../../core/app.js";
+import { setToken } from "../../core/auth.js";
 
 let gisInitialized = false;
 let gisRendered = false;
 
 function handleCredentialResponse(response) {
-  localStorage.setItem("google_token", response.credential);
+  setToken(response.credential);
 
   startApplication();
 }

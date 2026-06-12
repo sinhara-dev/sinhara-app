@@ -1,6 +1,6 @@
 import { showStatus } from "../../utils/status.js";
-import { GAS_URL } from "../../config.js";
 import { getCurrentMonthName } from "../../utils/utils.js";
+import { http } from "../../services/http.js";
 
 export const dashboardCache = {};
 let selectedMonth = "";
@@ -49,12 +49,16 @@ function setDashboardValues(data) {
 }
 
 async function getDashboardDataFromServer(month) {
-  const res = await fetch(
-    GAS_URL +
-      "?action=getDashboardData" +
-      "&month=" +
-      encodeURIComponent(month),
-  );
+  // const res = await fetch(
+  //   GAS_URL +
+  //     "?action=getDashboardData" +
+  //     "&month=" +
+  //     encodeURIComponent(month),
+  // );
+
+  const res = await http.Get("getDashboardData", {
+    month,
+  });
   const data = await res.json();
 
   if (!data.success) {

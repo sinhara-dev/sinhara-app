@@ -1,8 +1,8 @@
-import { GAS_URL } from "../../config.js";
 import { showStatus } from "../../utils/status.js";
 import { formatDateMonthDay, getCurrentMonthName } from "../../utils/utils.js";
 import { formatAmount } from "../../utils/utils.js";
 import { openActionModal, closeActionModal } from "../../utils/modal.js";
+import { http } from "../../services/http.js";
 
 const expenseCache = {};
 let selectedMonth = "";
@@ -56,16 +56,24 @@ async function submitExpense() {
   showStatusMessage("Creating new expense...");
 
   try {
-    const res = await fetch(GAS_URL, {
-      method: "POST",
-      body: JSON.stringify({
-        action: "addExpense",
-        date,
-        item,
-        amount,
-        type,
-        month,
-      }),
+    // const res = await fetch(GAS_URL, {
+    //   method: "POST",
+    //   body: JSON.stringify({
+    //     action: "addExpense",
+    //     date,
+    //     item,
+    //     amount,
+    //     type,
+    //     month,
+    //   }),
+    // });
+
+    const res = await http.Post("addExpense", {
+      date,
+      item,
+      amount,
+      type,
+      month,
     });
 
     const response = await res.json();
@@ -384,12 +392,14 @@ async function loadExpenseHeader(month) {
   setExpenseLoading();
 
   try {
-    const res = await fetch(
-      GAS_URL +
-        "?action=getExpenseSummary" +
-        "&month=" +
-        encodeURIComponent(month),
-    );
+    // const res = await fetch(
+    //   GAS_URL +
+    //     "?action=getExpenseSummary" +
+    //     "&month=" +
+    //     encodeURIComponent(month),
+    // );
+
+    const res = await http.Get("getExpenseSummary", { month });
 
     const response = await res.json();
 

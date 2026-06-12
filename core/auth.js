@@ -1,21 +1,19 @@
 import { showStatus } from "../utils/status.js";
-import { GAS_URL } from "../config.js";
+import { http } from "../services/http.js";
 
 const TOKEN_KEY = "google_token";
+
+let currentUser = "UNKNOWN";
 
 export function setToken(token) {
   localStorage.setItem(TOKEN_KEY, token);
 }
 
-export function getToken() {
+function getToken() {
   return localStorage.getItem(TOKEN_KEY);
 }
 
-export function clearToken() {
-  localStorage.removeItem(TOKEN_KEY);
-}
-
-export function parseJwt(token) {
+function parseJwt(token) {
   try {
     return JSON.parse(atob(token.split(".")[1]));
   } catch {
@@ -23,17 +21,18 @@ export function parseJwt(token) {
   }
 }
 
-export async function isAuthorized(email) {
+async function isAuthorized(email) {
   try {
-    const res = await fetch(
-      GAS_URL + "?action=validateUser&email=" + encodeURIComponent(email),
-    );
+    const res = await http.Get("validateUser", {
+      email,
+    });
     const response = await res.json();
     if (!response.success) {
       throw new Error(response.error || "Failed to validate user");
     }
 
     if (response.data) {
+      currentUser = email;
       return true;
     } else {
       throw new Error("Access denied");
@@ -44,7 +43,11 @@ export async function isAuthorized(email) {
   }
 }
 
-export function getUser() {
+export function getCurrentUser() {
+  return currentUser;
+}
+
+function getUser() {
   const token = getToken();
   if (!token) return null;
 
@@ -57,6 +60,7 @@ export function userLoggedIn() {
 }
 
 export async function checkAuth() {
+  // return true;
   const user = getUser();
   if (!user) return false;
 
