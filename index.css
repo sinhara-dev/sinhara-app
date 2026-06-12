@@ -1,6 +1,7 @@
 /* eslint-disable css/use-baseline */
 html {
   font-size: 22px;
+  overscroll-behavior-y: none;
 }
 
 body {
@@ -10,18 +11,14 @@ body {
   min-height: 100vh;
   box-sizing: border-box;
   background: #f8f9fa;
+  overscroll-behavior-y: none;
 }
 
 body.modal-open {
   overflow: hidden;
 }
 
-html,
-body {
-  overscroll-behavior-y: none;
-}
-
-#appScreen {
+#appView {
   display: none;
 }
 
@@ -81,7 +78,7 @@ label {
 
   background: rgba(0, 0, 0, 0.4);
 
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: center;
 
@@ -190,71 +187,6 @@ select {
   text-align: center;
 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-#loginScreen {
-  min-height: 80dvh;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 16px;
-}
-
-#signInText {
-  font-size: 1.3rem;
-  font-weight: bold;
-}
-
-.access-denied {
-  display: none;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  text-align: center;
-}
-
-.access-denied-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-.access-denied-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #374151;
-
-  margin-bottom: 0.5rem;
-}
-
-.access-denied-message {
-  font-size: 0.9rem;
-  color: #6b7280;
-
-  max-width: 300px;
-  line-height: 1.5;
-}
-
-.access-denied > * {
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.access-denied::before {
-  content: "";
-}
-
-.access-denied-card {
-  background: white;
-  padding: 2rem;
-
-  border-radius: 1rem;
-  border: 1px solid #e5e7eb;
-
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-
-  max-width: 350px;
 }
 
 #loadingSpinner {

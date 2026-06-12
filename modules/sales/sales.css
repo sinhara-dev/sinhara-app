@@ -27,6 +27,7 @@
 }
 
 .sales .header-item .value {
+  margin-top: 0.3rem;
   font-size: 0.9rem;
   font-weight: bold;
 }

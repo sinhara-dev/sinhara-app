@@ -3,8 +3,8 @@ import { showLogin } from "../modules/login/login.js";
 import { initRouter } from "./router.js";
 
 function showApp() {
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("appScreen").style.display = "block";
+  document.getElementById("loginView").style.display = "none";
+  document.getElementById("appView").style.display = "block";
 }
 
 function showAccessDenied() {
@@ -14,12 +14,12 @@ function showAccessDenied() {
   signInText.innerText = "Sign in with a different account";
 }
 
-function hideAccessDenied() {
-  document.getElementById("viewAccessDenied").style.display = "none";
-  const signInText = document.getElementById("signInText");
-  signInText.style.fontSize = "1.3rem";
-  signInText.innerText = "Sign in to continue";
-}
+// function hideAccessDenied() {
+//   document.getElementById("viewAccessDenied").style.display = "none";
+//   const signInText = document.getElementById("signInText");
+//   signInText.style.fontSize = "1.3rem";
+//   signInText.innerText = "Sign in to continue";
+// }
 
 function showLoader() {
   document.getElementById("loadingSpinner").style.display = "flex";
@@ -50,6 +50,7 @@ export async function startApplication() {
   const authenticated = await checkAuth();
 
   if (!authenticated) {
+    await loadView("login");
     hideLoader();
     if (userLoggedIn()) {
       showAccessDenied();
@@ -58,7 +59,6 @@ export async function startApplication() {
     return;
   }
 
-  hideAccessDenied();
   await loadPages();
   hideLoader();
   showApp();

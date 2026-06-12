@@ -271,7 +271,7 @@ async function submitSale(productId) {
   const commission =
     team === "Other"
       ? Number(document.getElementById("soldOtherPercentage").value) / 100
-      : MARKETING_TEAMS[team];
+      : Number(MARKETING_TEAMS[team]) / 100;
 
   const date = document.getElementById("soldDate").value;
 

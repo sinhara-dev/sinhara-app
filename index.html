@@ -19,6 +19,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="modules/login/login.css" />
     <link rel="stylesheet" href="modules/dashboard/dashboard.css" />
     <link rel="stylesheet" href="modules/inventory/inventory.css" />
     <link rel="stylesheet" href="modules/sales/sales.css" />
@@ -28,27 +29,13 @@
   <body>
     <div id="statusMessage"></div>
 
-    <div id="loginScreen">
-      <div id="viewAccessDenied" class="access-denied">
-        <div class="access-denied-card">
-          <div class="access-denied-icon">🔒</div>
-          <div class="access-denied-title">Access Denied</div>
-          <div class="access-denied-message">
-            You don't have permission to view this page.
-          </div>
-        </div>
-      </div>
-
-      <div id="signInText">Sign in to continue</div>
-      <div id="googleButton"></div>
-    </div>
-
     <div id="loadingSpinner">
       <div class="spinner"></div>
     </div>
 
-    <div id="appScreen" style="display: none">
-      <!-- Bottom Tab Bar -->
+    <div id="loginView"></div>
+
+    <div id="appView">
       <div class="bottom-tab-bar">
         <div id="tab-dashboard" class="tab">Dashboard</div>
         <div id="tab-inventory" class="tab">Inventory</div>
@@ -56,7 +43,6 @@
         <div id="tab-expenses" class="tab">Expenses</div>
       </div>
 
-      <!-- Views -->
       <div id="tabViews">
         <div id="dashboardView" class="view"></div>
         <div id="inventoryView" class="view"></div>
