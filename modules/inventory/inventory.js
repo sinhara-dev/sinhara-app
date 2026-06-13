@@ -282,18 +282,6 @@ async function submitSale(productId) {
   loader.style.display = "flex";
 
   try {
-    // const res = await fetch(GAS_URL, {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     action: "recordSale",
-    //     productId,
-    //     quantity,
-    //     marketingTeam: marketingTeam,
-    //     commission,
-    //     saleDate: date,
-    //   }),
-    // });
-
     const res = await http.Post("recordSale", {
       productId,
       quantity,
@@ -311,8 +299,9 @@ async function submitSale(productId) {
     await refreshProducts();
 
     const month = getMonthNameFromDate(date);
-    delete salesCache[month];
-    delete dashboardCache[month];
+    const cacheKey = `${new Date(date).getFullYear()}-${month}`;
+    delete salesCache[cacheKey];
+    delete dashboardCache[cacheKey];
 
     showStatus("Sale recorded");
   } catch (err) {
@@ -332,15 +321,6 @@ async function submitStockUpdate(productId) {
   loader.style.display = "flex";
 
   try {
-    // const res = await fetch(GAS_URL, {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     action: "updateInventoryStock",
-    //     productId,
-    //     quantityToAdd: quantity,
-    //   }),
-    // });
-
     const res = await http.Post("updateInventoryStock", {
       productId,
       quantityToAdd: quantity,

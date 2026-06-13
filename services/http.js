@@ -2,7 +2,9 @@ import { GAS_URL } from "../config.js";
 import { getCurrentUser } from "../core/auth.js";
 
 const IS_DEV =
-  location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  location.hostname === "localhost" ||
+  location.hostname === "127.0.0.1" ||
+  localStorage.getItem("app_env") === "dev";
 
 class HttpClient {
   async Get(action, params = {}) {

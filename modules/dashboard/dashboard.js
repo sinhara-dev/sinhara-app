@@ -1,9 +1,9 @@
 import { showStatus } from "../../utils/status.js";
-import { getCurrentMonthName } from "../../utils/utils.js";
+import { getCurrentDate, getCurrentMonthName } from "../../utils/utils.js";
 import { http } from "../../services/http.js";
 
 export const dashboardCache = {};
-let selectedMonth = "";
+let selectedDate = getCurrentDate();
 
 function setDashboardLoading(isLoading) {
   const ids = ["totalSale", "salesIncome", "operationalExpense", "grossProfit"];
@@ -48,15 +48,9 @@ function setDashboardValues(data) {
     "₹" + Number(data.grossProfit).toLocaleString("en-IN");
 }
 
-async function getDashboardDataFromServer(month) {
-  // const res = await fetch(
-  //   GAS_URL +
-  //     "?action=getDashboardData" +
-  //     "&month=" +
-  //     encodeURIComponent(month),
-  // );
-
+async function getDashboardDataFromServer(year, month) {
   const res = await http.Get("getDashboardData", {
+    year,
     month,
   });
   const data = await res.json();
@@ -68,29 +62,31 @@ async function getDashboardDataFromServer(month) {
   return data.data;
 }
 
-async function loadDashboard(month) {
-  if (dashboardCache[month]) {
-    setDashboardValues(dashboardCache[month]);
+async function loadDashboard(year, month) {
+  const cacheKey = `${year}-${month}`;
+  if (dashboardCache[cacheKey]) {
+    setDashboardValues(dashboardCache[cacheKey]);
     return;
   }
 
   setDashboardLoading(true);
 
   try {
-    const data = await getDashboardDataFromServer(month);
+    const data = await getDashboardDataFromServer(year, month);
 
     setDashboardValues(data);
     setDashboardLoading(false);
-    dashboardCache[month] = data;
+    dashboardCache[cacheKey] = data;
     saveDashboardCache();
   } catch (err) {
     showStatus(err, true);
+    clearDashboard();
   } finally {
     setDashboardLoading(false);
   }
 }
 
-async function refreshDashboard(month) {
+async function refreshDashboard(year, month) {
   setDashboardLoading(true);
 
   const icon = document.getElementById("dashboardRefreshIcon");
@@ -98,16 +94,20 @@ async function refreshDashboard(month) {
   icon.classList.add("dashboard-syncing");
 
   try {
-    const data = await getDashboardDataFromServer(month);
+    const data = await getDashboardDataFromServer(year, month);
 
     setDashboardValues(data);
 
     showStatus("Dashboard updated");
-    delete dashboardCache[month];
-    dashboardCache[month] = data;
+
+    const cacheKey = `${year}-${month}`;
+    delete dashboardCache[cacheKey];
+    dashboardCache[cacheKey] = data;
+
     saveDashboardCache();
   } catch (err) {
     showStatus(err.message, true);
+    clearDashboard();
   } finally {
     icon.classList.remove("dashboard-syncing");
     setDashboardLoading(false);
@@ -116,33 +116,44 @@ async function refreshDashboard(month) {
 
 export function initDashboard() {
   loadDashboardCache();
-  refreshDashboard(getCurrentMonthName());
-  selectedMonth = getCurrentMonthName();
+  const month = getCurrentMonthName();
+  const year = new Date().getFullYear();
   document
     .getElementById("dashboardRefreshFab")
     .addEventListener("click", () => {
-      refreshDashboard(selectedMonth);
+      refreshDashboard(year, month);
     });
 
   const dashboardMonth = document.getElementById("dashboardMonth");
 
-  dashboardMonth.addEventListener("change", (event) => {
-    const date = new Date(`${event.target.value}-01`);
+  dashboardMonth.addEventListener("change", () => {
+    const date = new Date(`${dashboardMonth.value}-01`);
+    if (selectedDate === date) return;
+
+    selectedDate = date;
 
     const monthName = date.toLocaleString("en-US", {
       month: "long",
     });
 
-    if (selectedMonth === monthName) return;
-
-    selectedMonth = monthName;
-
-    loadDashboard(monthName);
+    loadDashboard(date.getFullYear(), monthName);
   });
+}
+
+function clearDashboard() {
+  document.getElementById("totalSale").innerText = "₹--";
+  document.getElementById("salesIncome").innerText = "₹--";
+  document.getElementById("operationalExpense").innerText = "₹--";
+  document.getElementById("grossProfit").innerText = "₹--";
 }
 
 export const dashboard = {
   onEnter() {
-    loadDashboard(selectedMonth);
+    loadDashboard(
+      selectedDate.getFullYear(),
+      selectedDate.toLocaleString("en-US", {
+        month: "long",
+      }),
+    );
   },
 };

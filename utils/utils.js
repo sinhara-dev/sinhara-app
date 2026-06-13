@@ -2,10 +2,24 @@ export function formatAmount(amount) {
   return Number(amount).toLocaleString("en-IN");
 }
 
+// Eg: 2026-06-13
+export function getCurrentDate() {
+  const date = new Date();
+
+  const formatted =
+    `${date.getFullYear()}-` +
+    `${String(date.getMonth() + 1).padStart(2, "0")}-` +
+    `${String(date.getDate()).padStart(2, "0")}`;
+
+  return new Date(formatted);
+}
+
+// Eg: September
 export function getCurrentMonthName() {
   return new Date().toLocaleString("en-US", { month: "long" });
 }
 
+// Eg: September
 export function getMonthNameFromDate(date) {
   return new Date(date).toLocaleString("en-US", { month: "long" });
 }

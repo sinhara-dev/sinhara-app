@@ -1,11 +1,15 @@
 import { showStatus } from "../../utils/status.js";
-import { formatDateMonthDay, getCurrentMonthName } from "../../utils/utils.js";
-import { formatAmount } from "../../utils/utils.js";
+import {
+  formatDateMonthDay,
+  getCurrentMonthName,
+  getCurrentDate,
+  formatAmount,
+} from "../../utils/utils.js";
 import { openActionModal, closeActionModal } from "../../utils/modal.js";
 import { http } from "../../services/http.js";
 
 const expenseCache = {};
-let selectedMonth = "";
+let selectedDate = getCurrentDate();
 
 function showStatusMessage(message) {
   const statusDiv = document.getElementById("expense-status-message");
@@ -28,7 +32,7 @@ async function submitExpense() {
   const item = document.getElementById("expenseItem").value.trim();
   const amount = Number(document.getElementById("expenseAmount").value);
   const type = document.getElementById("expenseType").value;
-
+  const year = new Date(date).getFullYear();
   const month = new Date(date).toLocaleString("en-US", { month: "long" });
 
   if (!date) {
@@ -56,23 +60,12 @@ async function submitExpense() {
   showStatusMessage("Creating new expense...");
 
   try {
-    // const res = await fetch(GAS_URL, {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     action: "addExpense",
-    //     date,
-    //     item,
-    //     amount,
-    //     type,
-    //     month,
-    //   }),
-    // });
-
     const res = await http.Post("addExpense", {
       date,
       item,
       amount,
       type,
+      year,
       month,
     });
 
@@ -83,8 +76,9 @@ async function submitExpense() {
     }
 
     // refresh current month view
-    delete expenseCache[month];
-    loadExpenseHeader(month);
+    const cacheKey = `${year}-${month}`;
+    delete expenseCache[cacheKey];
+    loadExpenseHeader(year, month);
 
     showStatus("Expense added");
   } catch (err) {
@@ -177,23 +171,21 @@ export function initExpense() {
     .getElementById("expenseFab")
     .addEventListener("click", openAddExpense);
 
-  selectedMonth = getCurrentMonthName();
   const monthPicker = document.getElementById("expenseMonthPicker");
 
   monthPicker.value = new Date().toISOString().slice(0, 7);
 
-  monthPicker.addEventListener("change", (event) => {
-    const date = new Date(`${event.target.value}-01`);
+  monthPicker.addEventListener("change", () => {
+    const date = new Date(`${monthPicker.value}-01`);
+    if (selectedDate === date) return;
+
+    selectedDate = date;
 
     const monthName = date.toLocaleString("en-US", {
       month: "long",
     });
 
-    if (selectedMonth === monthName) return;
-
-    selectedMonth = monthName;
-
-    loadExpenseHeader(monthName);
+    loadExpenseHeader(date.getFullYear(), monthName);
   });
 }
 
@@ -322,84 +314,18 @@ function renderExpenseList(rows) {
   });
 }
 
-// function renderExpenseList(rows) {
-//   const container = document.getElementById("expenseList");
-
-//   if (!container) return;
-
-//   container.innerHTML = "";
-
-//   rows.forEach((r) => {
-//     const card = document.createElement("div");
-//     card.className = "expense-card";
-
-//     const row = document.createElement("div");
-//     row.className = "expense-row";
-
-//     // ---------- date ----------
-//     const dateEl = document.createElement("div");
-//     dateEl.className = "expense-date";
-//     dateEl.textContent = r.date;
-
-//     // ---------- main ----------
-//     const main = document.createElement("div");
-//     main.className = "expense-main";
-
-//     // item
-//     const item = document.createElement("div");
-//     item.className = "expense-item";
-//     item.textContent = r.item;
-
-//     // bottom section
-//     const bottom = document.createElement("div");
-//     bottom.className = "expense-bottom";
-
-//     // amount
-//     const amount = document.createElement("div");
-//     amount.className = "expense-amount";
-//     amount.textContent = `₹${formatAmount(r.amount)}`;
-
-//     // type
-//     const type = document.createElement("div");
-//     type.className = `expense-type ${r.typeClass}`;
-//     type.textContent = r.type;
-
-//     bottom.appendChild(amount);
-//     bottom.appendChild(type);
-
-//     // assemble main
-//     main.appendChild(item);
-//     main.appendChild(bottom);
-
-//     // assemble row
-//     row.appendChild(dateEl);
-//     row.appendChild(main);
-
-//     // assemble card
-//     card.appendChild(row);
-
-//     container.appendChild(card);
-//   });
-// }
-
-async function loadExpenseHeader(month) {
-  if (expenseCache[month]) {
-    updateExpenseHeader(expenseCache[month].summary);
-    renderExpenseList(expenseCache[month].list);
+async function loadExpenseHeader(year, month) {
+  const cacheKey = `${year}-${month}`;
+  if (expenseCache[cacheKey]) {
+    updateExpenseHeader(expenseCache[cacheKey].summary);
+    renderExpenseList(expenseCache[cacheKey].list);
     return;
   }
 
   setExpenseLoading();
 
   try {
-    // const res = await fetch(
-    //   GAS_URL +
-    //     "?action=getExpenseSummary" +
-    //     "&month=" +
-    //     encodeURIComponent(month),
-    // );
-
-    const res = await http.Get("getExpenseSummary", { month });
+    const res = await http.Get("getExpenseSummary", { year, month });
 
     const response = await res.json();
 
@@ -414,7 +340,7 @@ async function loadExpenseHeader(month) {
     updateExpenseHeader(data.summary);
     renderExpenseList(data.list);
 
-    expenseCache[month] = data;
+    expenseCache[cacheKey] = data;
   } catch (err) {
     clearExpenseHeaderAndList();
     showStatus(err.message, true);
@@ -426,6 +352,6 @@ async function loadExpenseHeader(month) {
 export const expense = {
   onEnter: () => {
     initExpense();
-    loadExpenseHeader(getCurrentMonthName());
+    loadExpenseHeader(new Date().getFullYear(), getCurrentMonthName());
   },
 };

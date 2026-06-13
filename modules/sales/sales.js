@@ -1,27 +1,29 @@
 import { http } from "../../services/http.js";
 import { showStatus } from "../../utils/status.js";
-import { formatDateMonthDay, getCurrentMonthName } from "../../utils/utils.js";
+import {
+  formatDateMonthDay,
+  getCurrentMonthName,
+  getCurrentDate,
+} from "../../utils/utils.js";
 
 export const salesCache = {};
-let selectedMonth = "";
+let selectedDate = getCurrentDate();
 
 export function initSales() {
-  selectedMonth = getCurrentMonthName();
   const monthPicker = document.getElementById("salesMonthPicker");
   monthPicker.value = new Date().toISOString().slice(0, 7);
 
-  monthPicker.addEventListener("change", (event) => {
-    const date = new Date(`${event.target.value}-01`);
+  monthPicker.addEventListener("change", () => {
+    const date = new Date(`${monthPicker.value}-01`);
+    if (selectedDate === date) return;
 
     const monthName = date.toLocaleString("en-US", {
       month: "long",
     });
 
-    if (selectedMonth === monthName) return;
+    selectedDate = date;
 
-    selectedMonth = monthName;
-
-    loadSalesData(monthName);
+    loadSalesData(date.getFullYear(), monthName);
   });
 }
 
@@ -186,20 +188,17 @@ function clearSalesHeaderAndList() {
   document.getElementById("salesProfit").innerText = "₹--";
 }
 
-async function loadSalesData(month) {
-  if (salesCache[month]) {
-    renderSalesList(salesCache[month].list);
+async function loadSalesData(year, month) {
+  const cacheKey = `${year}-${month}`;
+  if (salesCache[cacheKey]) {
+    renderSalesList(salesCache[cacheKey].list);
     return;
   }
 
   showSalesLoading();
 
   try {
-    // const res = await fetch(
-    //   `${GAS_URL}?action=getSalesSummary&month=${encodeURIComponent(month)}`,
-    // );
-
-    const res = await http.Get("getSalesSummary", { month });
+    const res = await http.Get("getSalesSummary", { year, month });
 
     const response = await res.json();
 
@@ -209,8 +208,8 @@ async function loadSalesData(month) {
 
     renderSalesList(response.data.list);
 
-    delete salesCache[month];
-    salesCache[month] = response.data;
+    delete salesCache[cacheKey];
+    salesCache[cacheKey] = response.data;
   } catch (err) {
     clearSalesHeaderAndList();
 
@@ -222,6 +221,6 @@ async function loadSalesData(month) {
 
 export const sales = {
   onEnter: () => {
-    loadSalesData(getCurrentMonthName());
+    loadSalesData(new Date().getFullYear(), getCurrentMonthName());
   },
 };
