@@ -210,10 +210,11 @@ async function loadSalesData(year, month) {
 
     delete salesCache[cacheKey];
     salesCache[cacheKey] = response.data;
-  } catch (err) {
+  } catch (error) {
+    console.error(error);
     clearSalesHeaderAndList();
 
-    showStatus(err.message, true);
+    showStatus(error.message, true);
   } finally {
     hideSalesLoading();
   }

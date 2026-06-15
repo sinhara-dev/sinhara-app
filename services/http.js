@@ -1,4 +1,4 @@
-import { GAS_URL } from "../config.js";
+import { BASE_URL } from "../config.js";
 import { getCurrentUser } from "../core/auth.js";
 
 const IS_DEV =
@@ -8,7 +8,7 @@ const IS_DEV =
 
 class HttpClient {
   async Get(action, params = {}) {
-    const url = new URL(GAS_URL);
+    const url = new URL(BASE_URL);
 
     url.searchParams.set("action", action);
     if (IS_DEV) {
@@ -27,8 +27,8 @@ class HttpClient {
   }
 
   async Post(action, body = {}) {
-    console.log("POST ", action);
-    return fetch(GAS_URL, {
+    console.log("POST ", action, " env: ", IS_DEV ? "dev" : "prod");
+    return fetch(BASE_URL, {
       method: "POST",
       body: JSON.stringify({
         action,

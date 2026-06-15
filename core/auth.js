@@ -37,8 +37,9 @@ async function isAuthorized(email) {
     } else {
       throw new Error("Access denied");
     }
-  } catch (e) {
-    showStatus(e.message, true);
+  } catch (error) {
+    console.error(error);
+    showStatus(error.message, true);
     return false;
   }
 }

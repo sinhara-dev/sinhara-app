@@ -81,8 +81,9 @@ async function submitExpense() {
     loadExpenseHeader(year, month);
 
     showStatus("Expense added");
-  } catch (err) {
-    showStatus(err.message, true);
+  } catch (error) {
+    console.error(error);
+    showStatus(error.message, true);
   } finally {
     hideStatusMessage();
   }
@@ -341,9 +342,10 @@ async function loadExpenseHeader(year, month) {
     renderExpenseList(data.list);
 
     expenseCache[cacheKey] = data;
-  } catch (err) {
+  } catch (error) {
+    console.error(error);
     clearExpenseHeaderAndList();
-    showStatus(err.message, true);
+    showStatus(error.message, true);
   } finally {
     hideExpenseLoading();
   }

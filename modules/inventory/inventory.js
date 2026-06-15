@@ -304,8 +304,9 @@ async function submitSale(productId) {
     delete dashboardCache[cacheKey];
 
     showStatus("Sale recorded");
-  } catch (err) {
-    showStatus(err.message, true);
+  } catch (error) {
+    console.error(error);
+    showStatus(error.message, true);
   } finally {
     loader.style.display = "none";
   }
@@ -335,8 +336,9 @@ async function submitStockUpdate(productId) {
     await refreshProducts();
 
     showStatus("Stock updated");
-  } catch (err) {
-    showStatus(err.message, true);
+  } catch (error) {
+    console.error(error);
+    showStatus(error.message, true);
   } finally {
     loader.style.display = "none";
   }
@@ -490,7 +492,6 @@ async function refreshProducts() {
   setSyncing(true);
 
   try {
-    // const res = await fetch(GAS_URL + "?action=getInventoryProducts");
     const res = await http.Get("getInventoryProducts");
 
     const response = await res.json();
@@ -505,8 +506,9 @@ async function refreshProducts() {
 
     renderProducts(products);
     updateInventoryHeader(products);
-  } catch (err) {
-    showStatus(err.message, true);
+  } catch (error) {
+    console.error(error);
+    showStatus(error.message, true);
   } finally {
     setSyncing(false);
   }
@@ -609,19 +611,6 @@ async function updateInventoryAddNewProduct() {
       reader.readAsDataURL(file);
     });
 
-    // const res = await fetch(GAS_URL, {
-    //   method: "POST",
-    //   body: JSON.stringify({
-    //     action: "addNewProduct",
-    //     productName,
-    //     amount,
-    //     expense,
-    //     quantity,
-    //     base64Data: base64,
-    //     mimeType: file.type,
-    //   }),
-    // });
-
     const res = await http.Post("addNewProduct", {
       productName,
       amount,
@@ -640,8 +629,9 @@ async function updateInventoryAddNewProduct() {
     await refreshProducts();
 
     showStatus("Product created.\nID: " + response.data.productId);
-  } catch (err) {
-    showStatus(err.message, true);
+  } catch (error) {
+    console.error(error);
+    showStatus(error.message, true);
   } finally {
     hideStatusMessage();
 

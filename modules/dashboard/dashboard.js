@@ -78,8 +78,9 @@ async function loadDashboard(year, month) {
     setDashboardLoading(false);
     dashboardCache[cacheKey] = data;
     saveDashboardCache();
-  } catch (err) {
-    showStatus(err, true);
+  } catch (error) {
+    console.error(error);
+    showStatus(error.message, true);
     clearDashboard();
   } finally {
     setDashboardLoading(false);
@@ -105,8 +106,9 @@ async function refreshDashboard(year, month) {
     dashboardCache[cacheKey] = data;
 
     saveDashboardCache();
-  } catch (err) {
-    showStatus(err.message, true);
+  } catch (error) {
+    console.error(error);
+    showStatus(error.message, true);
     clearDashboard();
   } finally {
     icon.classList.remove("dashboard-syncing");
