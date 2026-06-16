@@ -1,9 +1,9 @@
 import { showStatus } from "../../utils/status.js";
 import {
   formatDateMonthDay,
-  getCurrentMonthName,
   getCurrentDate,
   formatAmount,
+  getCurrentMonthName,
 } from "../../utils/utils.js";
 import { openActionModal, closeActionModal } from "../../utils/modal.js";
 import { http } from "../../services/http.js";
@@ -188,6 +188,17 @@ export function initExpense() {
 
     loadExpenseHeader(date.getFullYear(), monthName);
   });
+
+  document
+    .getElementById("expenseRefreshButton")
+    .addEventListener("click", () => {
+      loadExpenseHeader(
+        selectedDate.getFullYear(),
+        selectedDate.toLocaleString("en-US", {
+          month: "long",
+        }),
+      );
+    });
 }
 
 function setExpenseLoading() {
@@ -353,7 +364,6 @@ async function loadExpenseHeader(year, month) {
 
 export const expense = {
   onEnter: () => {
-    initExpense();
-    loadExpenseHeader(new Date().getFullYear(), getCurrentMonthName());
+    loadExpenseHeader(new Date().getFullYear(), getCurrentMonthName);
   },
 };
