@@ -25,6 +25,24 @@ export function initSales() {
 
     loadSalesData(date.getFullYear(), monthName);
   });
+
+  const refreshButton = document.getElementById("salesRefreshButton");
+
+  refreshButton.addEventListener("click", () => {
+    refreshButton.classList.add("spinning");
+
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.toLocaleString("en-US", {
+      month: "long",
+    });
+
+    const cacheKey = `${year}-${month}`;
+    delete salesCache[cacheKey];
+
+    loadSalesData(year, month).finally(() => {
+      refreshButton.classList.remove("spinning");
+    });
+  });
 }
 
 function showImagePreview(imageUrl) {

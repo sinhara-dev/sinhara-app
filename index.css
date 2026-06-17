@@ -37,6 +37,8 @@ button {
   font-weight: bold;
 
   cursor: pointer;
+
+  -webkit-tap-highlight-color: transparent;
 }
 
 button:active {

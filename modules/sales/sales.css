@@ -32,24 +32,52 @@
   font-weight: bold;
 }
 
-.sales .month-chip {
-  display: inline-flex;
+.sales .month-refresh-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 0.5rem;
+  margin-top: 0.2rem;
+}
 
+.sales .month-refresh-row .month-chip {
   width: fit-content;
 
-  padding: 0.3rem 1rem;
-
-  background: white;
+  justify-self: center;
 
   border: 1px solid #d1d5db;
   border-radius: 999px;
 
+  background: #eff6ff;
+
+  border-color: #bfdbfe;
+
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  padding: 0.5rem 1rem;
+
+  font-size: 0.6rem;
 }
 
-.sales .month-chip input[type="month"] {
+.sales .month-refresh-row .refresh-btn {
+  width: 2rem;
+  height: 2rem;
+
+  justify-self: end;
+
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+}
+
+.sales .month-refresh-row .refresh-btn.spinning {
+  animation: spin 1s linear infinite;
+}
+
+.sales .month-refresh-row .month-chip input[type="month"] {
   border: none;
   outline: none;
 
@@ -61,22 +89,6 @@
   color: #374151;
 
   cursor: pointer;
-}
-
-.sales .month-chip.expense {
-  margin-top: 0.2rem;
-  display: flex;
-  width: fit-content;
-  margin: 0.2rem auto 0;
-  justify-content: center;
-  align-items: center;
-  background: #eff6ff;
-  border-color: #bfdbfe;
-}
-
-.sales #salesMonthPicker {
-  font-size: 0.6rem;
-  padding: 0.1rem 1rem;
 }
 
 .sales #salesList {

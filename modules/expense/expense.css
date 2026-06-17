@@ -73,6 +73,10 @@
   padding: 0;
 }
 
+.expense .month-refresh-row .refresh-btn.spinning {
+  animation: spin 1s linear infinite;
+}
+
 .expense .month-refresh-row .month-chip input[type="month"] {
   border: none;
   outline: none;

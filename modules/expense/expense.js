@@ -189,16 +189,23 @@ export function initExpense() {
     loadExpenseHeader(date.getFullYear(), monthName);
   });
 
-  document
-    .getElementById("expenseRefreshButton")
-    .addEventListener("click", () => {
-      loadExpenseHeader(
-        selectedDate.getFullYear(),
-        selectedDate.toLocaleString("en-US", {
-          month: "long",
-        }),
-      );
+  const refreshButton = document.getElementById("expenseRefreshButton");
+
+  refreshButton.addEventListener("click", () => {
+    refreshButton.classList.add("spinning");
+
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.toLocaleString("en-US", {
+      month: "long",
     });
+
+    const cacheKey = `${year}-${month}`;
+    delete expenseCache[cacheKey];
+
+    loadExpenseHeader(year, month).finally(() => {
+      refreshButton.classList.remove("spinning");
+    });
+  });
 }
 
 function setExpenseLoading() {
@@ -364,6 +371,6 @@ async function loadExpenseHeader(year, month) {
 
 export const expense = {
   onEnter: () => {
-    loadExpenseHeader(new Date().getFullYear(), getCurrentMonthName);
+    loadExpenseHeader(new Date().getFullYear(), getCurrentMonthName());
   },
 };
