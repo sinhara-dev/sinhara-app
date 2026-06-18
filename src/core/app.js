@@ -30,7 +30,7 @@ function hideLoader() {
 }
 
 async function loadView(viewName) {
-  const response = await fetch(`modules/${viewName}/${viewName}.html`);
+  const response = await fetch(`src/modules/${viewName}/${viewName}.html`);
   const html = await response.text();
 
   document.getElementById(`${viewName}View`).innerHTML = html;

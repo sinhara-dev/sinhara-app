@@ -361,8 +361,6 @@ function hideStatusMessage() {
 }
 
 function renderProducts(products) {
-  productsCache = products;
-
   const gallery = document.getElementById("inventory_product_gallery");
 
   if (!gallery) {
@@ -504,6 +502,8 @@ async function refreshProducts() {
 
     localStorage.setItem("inventoryProducts", JSON.stringify(products));
 
+    productsCache = products;
+
     renderProducts(products);
     updateInventoryHeader(products);
   } catch (error) {
@@ -518,8 +518,10 @@ function renderCachedProducts() {
   const cached = localStorage.getItem("inventoryProducts");
 
   if (cached) {
-    renderProducts(JSON.parse(cached));
-    updateInventoryHeader(JSON.parse(cached));
+    const products = JSON.parse(cached);
+    renderProducts(products);
+    updateInventoryHeader(products);
+    productsCache = products;
     return;
   }
 
@@ -639,6 +641,19 @@ async function updateInventoryAddNewProduct() {
   }
 }
 
+function onInventorySearch(event) {
+  const searchText = event.target.value.toLowerCase();
+
+  const filteredItems = productsCache.filter((product) => {
+    return (
+      String(product.name).toLowerCase().includes(searchText) ||
+      String(product.id).includes(searchText)
+    );
+  });
+
+  renderProducts(filteredItems);
+}
+
 export function initInventory() {
   document.getElementById("syncBtn").addEventListener("click", refreshProducts);
   document
@@ -660,6 +675,10 @@ export function initInventory() {
   document
     .getElementById("actionModalCloseBtn")
     .addEventListener("click", closeActionModal);
+
+  document
+    .getElementById("inventorySearch")
+    .addEventListener("input", onInventorySearch);
 }
 
 export const inventory = {

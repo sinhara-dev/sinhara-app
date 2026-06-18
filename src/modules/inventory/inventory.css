@@ -35,6 +35,38 @@
   margin-top: 0.3rem;
 }
 
+.inventory .search-row {
+  position: relative;
+
+  width: 100%;
+  max-width: 20rem; /* Adjust as needed */
+
+  margin: 0.4rem 0;
+}
+
+.inventory .search-row input {
+  width: 100%;
+  padding: 0.45rem 1rem 0.45rem 2.5rem;
+
+  border: 1px solid #ddd;
+  border-radius: 999px;
+
+  font-size: 0.65rem;
+  box-sizing: border-box;
+}
+
+.inventory .search-icon {
+  position: absolute;
+
+  right: 0.9rem;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 .inventory #syncBtn {
   width: 2rem;
   height: 2rem;
