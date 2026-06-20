@@ -90,9 +90,9 @@ async function loadDashboard(year, month) {
 async function refreshDashboard(year, month) {
   setDashboardLoading(true);
 
-  const icon = document.getElementById("dashboardRefreshIcon");
+  const refreshButton = document.getElementById("dashboardRefreshButton");
 
-  icon.classList.add("dashboard-syncing");
+  refreshButton.classList.add("dashboard-syncing");
 
   try {
     const data = await getDashboardDataFromServer(year, month);
@@ -111,7 +111,7 @@ async function refreshDashboard(year, month) {
     showStatus(error.message, true);
     clearDashboard();
   } finally {
-    icon.classList.remove("dashboard-syncing");
+    refreshButton.classList.remove("dashboard-syncing");
     setDashboardLoading(false);
   }
 }
@@ -121,7 +121,7 @@ export function initDashboard() {
   const month = getCurrentMonthName();
   const year = new Date().getFullYear();
   document
-    .getElementById("dashboardRefreshFab")
+    .getElementById("dashboardRefreshButton")
     .addEventListener("click", () => {
       refreshDashboard(year, month);
     });
