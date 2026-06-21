@@ -1,9 +1,9 @@
-import { showStatus } from "../../utils/status.js";
-import { getCurrentDate, getCurrentMonthName } from "../../utils/utils.js";
+import * as utils from "../../utils/utils.js";
+import * as app from "../../core/app.js";
 import { http } from "../../services/http.js";
 
 export const dashboardCache = {};
-let selectedDate = getCurrentDate();
+let selectedDate = utils.GetCurrentDate();
 
 function setDashboardLoading(isLoading) {
   const ids = ["totalSale", "salesIncome", "operationalExpense", "grossProfit"];
@@ -19,17 +19,6 @@ function setDashboardLoading(isLoading) {
       el.classList.remove("skeleton");
     }
   });
-}
-
-function saveDashboardCache() {
-  localStorage.setItem("dashboardCache", JSON.stringify(dashboardCache));
-}
-
-function loadDashboardCache() {
-  Object.assign(
-    dashboardCache,
-    JSON.parse(localStorage.getItem("dashboardCache") || "{}"),
-  );
 }
 
 function setDashboardValues(data) {
@@ -53,13 +42,14 @@ async function getDashboardDataFromServer(year, month) {
     year,
     month,
   });
-  const data = await res.json();
 
-  if (!data.success) {
-    throw new Error(data.error || "Unable to fetch data");
+  if (res.status !== 200) {
+    throw new Error(
+      `Unable to fetch data, status: ${res.status}, statusText: ${res.statusText}`,
+    );
   }
 
-  return data.data;
+  return await res.json();
 }
 
 async function loadDashboard(year, month) {
@@ -72,15 +62,31 @@ async function loadDashboard(year, month) {
   setDashboardLoading(true);
 
   try {
-    const data = await getDashboardDataFromServer(year, month);
+    const response = await getDashboardDataFromServer(year, month);
 
-    setDashboardValues(data);
-    setDashboardLoading(false);
-    dashboardCache[cacheKey] = data;
-    saveDashboardCache();
+    switch (response.code) {
+      case 200: {
+        setDashboardValues(response.data);
+        setDashboardLoading(false);
+        dashboardCache[cacheKey] = response.data;
+        break;
+      }
+
+      case 401: {
+        app.Logout();
+        break;
+      }
+
+      default: {
+        const error = new Error("System Error");
+        error.response = response;
+        throw error;
+      }
+    }
   } catch (error) {
     console.error(error);
-    showStatus(error.message, true);
+    console.error({ ...error });
+    utils.ShowStatus(error.message, true);
     clearDashboard();
   } finally {
     setDashboardLoading(false);
@@ -95,20 +101,35 @@ async function refreshDashboard(year, month) {
   refreshButton.classList.add("dashboard-syncing");
 
   try {
-    const data = await getDashboardDataFromServer(year, month);
+    const response = await getDashboardDataFromServer(year, month);
 
-    setDashboardValues(data);
+    switch (response.code) {
+      case 200: {
+        setDashboardValues(response.data);
 
-    showStatus("Dashboard updated");
+        utils.ShowStatus("Dashboard updated");
 
-    const cacheKey = `${year}-${month}`;
-    delete dashboardCache[cacheKey];
-    dashboardCache[cacheKey] = data;
+        const cacheKey = `${year}-${month}`;
+        delete dashboardCache[cacheKey];
+        dashboardCache[cacheKey] = response.data;
+        break;
+      }
 
-    saveDashboardCache();
+      case 401: {
+        app.Logout();
+        break;
+      }
+
+      default: {
+        const error = new Error("System Error");
+        error.response = response;
+        throw error;
+      }
+    }
   } catch (error) {
     console.error(error);
-    showStatus(error.message, true);
+    console.error({ ...error });
+    utils.ShowStatus(error.message, true);
     clearDashboard();
   } finally {
     refreshButton.classList.remove("dashboard-syncing");
@@ -117,8 +138,7 @@ async function refreshDashboard(year, month) {
 }
 
 export function initDashboard() {
-  loadDashboardCache();
-  const month = getCurrentMonthName();
+  const month = utils.GetCurrentMonthName();
   const year = new Date().getFullYear();
   document
     .getElementById("dashboardRefreshButton")
@@ -127,7 +147,6 @@ export function initDashboard() {
     });
 
   const dashboardMonth = document.getElementById("dashboardMonth");
-
   dashboardMonth.addEventListener("change", () => {
     const date = new Date(`${dashboardMonth.value}-01`);
     if (selectedDate === date) return;

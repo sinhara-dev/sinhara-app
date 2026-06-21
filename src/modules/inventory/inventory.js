@@ -1,5 +1,4 @@
-import { showStatus } from "../../utils/status.js";
-import { formatAmount, getMonthNameFromDate } from "../../utils/utils.js";
+import * as utils from "../../utils/utils.js";
 import { MARKETING_TEAMS } from "../../config.js";
 import { openActionModal, closeActionModal } from "../../utils/modal.js";
 import { salesCache } from "../sales/sales.js";
@@ -24,7 +23,7 @@ function openSoldDialog(event, productId) {
   const product = productsCache.find((p) => Number(p.id) === Number(productId));
 
   if (!product) {
-    showStatus("Product not found", true);
+    utils.ShowStatus("Product not found", true);
     return;
   }
 
@@ -52,7 +51,7 @@ function openSoldDialog(event, productId) {
   name.style.fontWeight = "bold";
 
   const price = document.createElement("div");
-  price.textContent = `₹${formatAmount(product.amount)}`;
+  price.textContent = `₹${utils.FormatAmount(product.amount)}`;
   price.style.marginTop = "0.2rem";
   price.style.marginBottom = "0.2rem";
   price.style.fontSize = "0.7rem";
@@ -183,7 +182,7 @@ function openStockDialog(event, productId) {
   const product = productsCache.find((p) => Number(p.id) === Number(productId));
 
   if (!product) {
-    showStatus("Product not found", true);
+    utils.ShowStatus("Product not found", true);
     return;
   }
 
@@ -211,7 +210,7 @@ function openStockDialog(event, productId) {
   name.style.fontWeight = "bold";
 
   const price = document.createElement("div");
-  price.textContent = `₹${formatAmount(product.amount)}`;
+  price.textContent = `₹${utils.FormatAmount(product.amount)}`;
 
   const stock = document.createElement("div");
   stock.textContent = `Current Stock: ${product.quantity}`;
@@ -261,7 +260,7 @@ async function submitSale(productId) {
   if (team === "Other") {
     marketingTeam = document.getElementById("soldOtherName").value;
     if (marketingTeam === "") {
-      showStatus("Marketing team name is required", true);
+      utils.ShowStatus("Marketing team name is required", true);
       return;
     }
   } else {
@@ -292,21 +291,21 @@ async function submitSale(productId) {
 
     const response = await res.json();
 
-    if (!response.success) {
+    if (response.code !== 200) {
       throw new Error(response.error || "Failed to record sale");
     }
 
     await refreshProducts();
 
-    const month = getMonthNameFromDate(date);
+    const month = utils.GetMonthNameFromDate(date);
     const cacheKey = `${new Date(date).getFullYear()}-${month}`;
     delete salesCache[cacheKey];
     delete dashboardCache[cacheKey];
 
-    showStatus("Sale recorded");
+    utils.ShowStatus("Sale recorded");
   } catch (error) {
     console.error(error);
-    showStatus(error.message, true);
+    utils.ShowStatus(error.message, true);
   } finally {
     loader.style.display = "none";
   }
@@ -329,16 +328,16 @@ async function submitStockUpdate(productId) {
 
     const response = await res.json();
 
-    if (!response.success) {
+    if (response.code !== 200) {
       throw new Error(response.error || "Failed to update stock");
     }
 
     await refreshProducts();
 
-    showStatus("Stock updated");
+    utils.ShowStatus("Stock updated");
   } catch (error) {
     console.error(error);
-    showStatus(error.message, true);
+    utils.ShowStatus(error.message, true);
   } finally {
     loader.style.display = "none";
   }
@@ -403,7 +402,7 @@ function renderProducts(products) {
 
     const amount = document.createElement("div");
     amount.className = "amount";
-    amount.textContent = `₹${formatAmount(product.amount)}`;
+    amount.textContent = `₹${utils.FormatAmount(product.amount)}`;
 
     const stock = document.createElement("div");
     stock.className = "stock";
@@ -494,7 +493,7 @@ async function refreshProducts() {
 
     const response = await res.json();
 
-    if (!response.success) {
+    if (response.code !== 200) {
       throw new Error(response.error || "Failed to load inventory products");
     }
 
@@ -508,7 +507,7 @@ async function refreshProducts() {
     updateInventoryHeader(products);
   } catch (error) {
     console.error(error);
-    showStatus(error.message, true);
+    utils.ShowStatus(error.message, true);
   } finally {
     setSyncing(false);
   }
@@ -566,7 +565,7 @@ async function updateInventoryAddNewProduct() {
   ).value;
 
   if (!productName.trim()) {
-    showStatus("Product name is required", true);
+    utils.ShowStatus("Product name is required", true);
     return;
   }
 
@@ -575,7 +574,7 @@ async function updateInventoryAddNewProduct() {
   );
 
   if (amount <= 0) {
-    showStatus("Amount is required", true);
+    utils.ShowStatus("Amount is required", true);
     return;
   }
 
@@ -592,7 +591,7 @@ async function updateInventoryAddNewProduct() {
     .files[0];
 
   if (!file) {
-    showStatus("Please select a product photo", true);
+    utils.ShowStatus("Please select a product photo", true);
     return;
   }
 
@@ -624,16 +623,16 @@ async function updateInventoryAddNewProduct() {
 
     const response = await res.json();
 
-    if (!response.success) {
+    if (response.code !== 200) {
       throw new Error(response.error || "Failed to create product");
     }
 
     await refreshProducts();
 
-    showStatus("Product created.\nID: " + response.data.productId);
+    utils.ShowStatus("Product created.\nID: " + response.data.productId);
   } catch (error) {
     console.error(error);
-    showStatus(error.message, true);
+    utils.ShowStatus(error.message, true);
   } finally {
     hideStatusMessage();
 

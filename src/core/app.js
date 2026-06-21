@@ -1,5 +1,5 @@
-import { checkAuth, userLoggedIn } from "./auth.js";
-import { showLogin } from "../modules/login/login.js";
+import * as auth from "./auth.js";
+import { ShowLogin } from "../modules/login/login.js";
 import { initRouter } from "./router.js";
 
 function showApp() {
@@ -21,12 +21,13 @@ function showAccessDenied() {
 //   signInText.innerText = "Sign in to continue";
 // }
 
-function showLoader() {
-  document.getElementById("loadingSpinner").style.display = "flex";
-}
+let loginViewLoaded = false;
 
-function hideLoader() {
-  document.getElementById("loadingSpinner").style.display = "none";
+async function loadLoginView() {
+  if (loginViewLoaded) return;
+  loginViewLoaded = true;
+
+  await loadView("login");
 }
 
 async function loadView(viewName) {
@@ -45,22 +46,20 @@ async function loadPages() {
   ]);
 }
 
-export async function startApplication() {
-  showLoader();
-  const authenticated = await checkAuth();
-
-  if (!authenticated) {
-    await loadView("login");
-    hideLoader();
-    if (userLoggedIn()) {
-      showAccessDenied();
-    }
-    showLogin();
+export async function StartApplication() {
+  if (!auth.UserLoggedIn()) {
+    await loadLoginView();
+    ShowLogin();
     return;
   }
 
   await loadPages();
-  hideLoader();
   showApp();
   initRouter();
+}
+
+export function Logout() {
+  showAccessDenied();
+  ShowLogin();
+  auth.RemoveUserToken();
 }

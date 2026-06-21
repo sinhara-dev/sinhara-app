@@ -1,13 +1,8 @@
 import { http } from "../../services/http.js";
-import { showStatus } from "../../utils/status.js";
-import {
-  formatDateMonthDay,
-  getCurrentMonthName,
-  getCurrentDate,
-} from "../../utils/utils.js";
+import * as utils from "../../utils/utils.js";
 
 export const salesCache = {};
-let selectedDate = getCurrentDate();
+let selectedDate = utils.GetCurrentDate();
 
 export function initSales() {
   const monthPicker = document.getElementById("salesMonthPicker");
@@ -118,7 +113,7 @@ function renderSalesList(rows) {
 
     const date = document.createElement("div");
     date.className = "sales-date";
-    date.textContent = formatDateMonthDay(r.date);
+    date.textContent = utils.FormatDateMonthDay(r.date);
 
     const expense = document.createElement("div");
     expense.className = "sales-date";
@@ -220,7 +215,7 @@ async function loadSalesData(year, month) {
 
     const response = await res.json();
 
-    if (!response.success) {
+    if (response.code !== 200) {
       throw new Error(response.error);
     }
 
@@ -232,7 +227,7 @@ async function loadSalesData(year, month) {
     console.error(error);
     clearSalesHeaderAndList();
 
-    showStatus(error.message, true);
+    utils.ShowStatus(error.message, true);
   } finally {
     hideSalesLoading();
   }
@@ -240,6 +235,6 @@ async function loadSalesData(year, month) {
 
 export const sales = {
   onEnter: () => {
-    loadSalesData(new Date().getFullYear(), getCurrentMonthName());
+    loadSalesData(new Date().getFullYear(), utils.GetCurrentMonthName());
   },
 };

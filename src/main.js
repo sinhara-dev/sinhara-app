@@ -1,5 +1,5 @@
-import { startApplication } from "./core/app.js";
+import * as app from "./core/app.js";
 
 window.onload = function () {
-  startApplication();
+  app.StartApplication();
 };

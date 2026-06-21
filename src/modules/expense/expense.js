@@ -1,15 +1,9 @@
-import { showStatus } from "../../utils/status.js";
-import {
-  formatDateMonthDay,
-  getCurrentDate,
-  formatAmount,
-  getCurrentMonthName,
-} from "../../utils/utils.js";
+import * as utils from "../../utils/utils.js";
 import { openActionModal, closeActionModal } from "../../utils/modal.js";
 import { http } from "../../services/http.js";
 
 const expenseCache = {};
-let selectedDate = getCurrentDate();
+let selectedDate = utils.GetCurrentDate();
 
 function showStatusMessage(message) {
   const statusDiv = document.getElementById("expense-status-message");
@@ -36,22 +30,22 @@ async function submitExpense() {
   const month = new Date(date).toLocaleString("en-US", { month: "long" });
 
   if (!date) {
-    showStatus("Please select a valid date");
+    utils.ShowStatus("Please select a valid date");
     return;
   }
 
   if (!item) {
-    showStatus("Please add valid item name");
+    utils.ShowStatus("Please add valid item name");
     return;
   }
 
   if (!amount || amount <= 0) {
-    showStatus("Please choose valid amount");
+    utils.ShowStatus("Please choose valid amount");
     return;
   }
 
   if (!type) {
-    showStatus("Please choose availale type");
+    utils.ShowStatus("Please choose availale type");
     return;
   }
 
@@ -71,7 +65,7 @@ async function submitExpense() {
 
     const response = await res.json();
 
-    if (!response.success) {
+    if (response.code !== 200) {
       throw new Error(response.error || "Failed to add expense");
     }
 
@@ -80,10 +74,10 @@ async function submitExpense() {
     delete expenseCache[cacheKey];
     loadExpenseHeader(year, month);
 
-    showStatus("Expense added");
+    utils.ShowStatus("Expense added");
   } catch (error) {
     console.error(error);
-    showStatus(error.message, true);
+    utils.ShowStatus(error.message, true);
   } finally {
     hideStatusMessage();
   }
@@ -285,7 +279,7 @@ function renderExpenseList(rows) {
   rows.forEach((r) => {
     const date = new Date(r.date);
 
-    const monthDay = formatDateMonthDay(date);
+    const monthDay = utils.FormatDateMonthDay(date);
 
     const dayName = date.toLocaleDateString("en-US", {
       weekday: "long",
@@ -316,7 +310,7 @@ function renderExpenseList(rows) {
 
           <div class="expense-bottom">
             <div class="expense-amount">
-              ₹${formatAmount(r.amount)}
+              ₹${utils.FormatAmount(r.amount)}
             </div>
 
             <div class="expense-type ${r.typeClass}">
@@ -348,7 +342,7 @@ async function loadExpenseHeader(year, month) {
 
     const response = await res.json();
 
-    if (!response.success) {
+    if (response.code !== 200) {
       throw new Error(response.error || "Failed to load expense summary");
     }
 
@@ -363,7 +357,7 @@ async function loadExpenseHeader(year, month) {
   } catch (error) {
     console.error(error);
     clearExpenseHeaderAndList();
-    showStatus(error.message, true);
+    utils.ShowStatus(error.message, true);
   } finally {
     hideExpenseLoading();
   }
@@ -371,6 +365,6 @@ async function loadExpenseHeader(year, month) {
 
 export const expense = {
   onEnter: () => {
-    loadExpenseHeader(new Date().getFullYear(), getCurrentMonthName());
+    loadExpenseHeader(new Date().getFullYear(), utils.GetCurrentMonthName());
   },
 };

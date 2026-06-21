@@ -1,5 +1,5 @@
 import { BASE_URL } from "../config.js";
-import { getCurrentUser } from "../core/auth.js";
+import { GetUserToken } from "../core/auth.js";
 
 const IS_DEV =
   location.hostname === "localhost" ||
@@ -14,26 +14,27 @@ class HttpClient {
     if (IS_DEV) {
       url.searchParams.set("env", "dev");
     }
-    url.searchParams.set("user", getCurrentUser());
+    url.searchParams.set("token", GetUserToken());
 
     Object.entries(params).forEach(([key, value]) => {
       url.searchParams.set(key, value);
     });
 
-    console.log("GET ", url.searchParams.toString());
+    console.info("GET ", url.searchParams.toString());
+
     return fetch(url, {
       method: "GET",
     });
   }
 
   async Post(action, body = {}) {
-    console.log("POST ", action, " env: ", IS_DEV ? "dev" : "prod");
+    console.info("POST ", action, " env: ", IS_DEV ? "dev" : "prod");
     return fetch(BASE_URL, {
       method: "POST",
       body: JSON.stringify({
         action,
         env: IS_DEV ? "dev" : "",
-        user: getCurrentUser(),
+        token: GetUserToken(),
         ...body,
       }),
     });

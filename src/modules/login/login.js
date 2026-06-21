@@ -1,15 +1,52 @@
 /* global google */
 
-import { startApplication } from "../../core/app.js";
-import { setToken } from "../../core/auth.js";
+import * as app from "../../core/app.js";
+import * as auth from "../../core/auth.js";
+import { http } from "../../services/http.js";
+import * as utils from "../../utils/utils.js";
 
 let gisInitialized = false;
 let gisRendered = false;
 
-function handleCredentialResponse(response) {
-  setToken(response.credential);
+async function handleCredentialResponse(googleResponse) {
+  console.error("received response from Google");
+  try {
+    utils.ShowLoader();
 
-  startApplication();
+    console.error("calling login endpoint");
+    const resp = await http.Post("login", {
+      googleToken: googleResponse.credential,
+    });
+
+    if (resp.status !== 200) {
+      throw new Error(
+        `UNKNOWN ERROR, status: ${resp.status}, statusText: ${resp.statusText}`,
+      );
+    }
+
+    const response = await resp.json();
+
+    console.error(`login endpoint responded with code: ${response.code}`);
+
+    switch (response.code) {
+      case 200:
+        auth.SetUserToken(response.data.token);
+        await app.StartApplication();
+        break;
+      case 401:
+        app.Logout();
+        break;
+      default:
+        utils.ShowStatus("System Error", true);
+        console.error(response.error);
+        break;
+    }
+  } catch (error) {
+    utils.ShowStatus(String(error), true);
+    console.error(error);
+  } finally {
+    utils.HideLoader();
+  }
 }
 
 function initGoogle() {
@@ -36,7 +73,7 @@ function renderLoginUI() {
   });
 }
 
-export async function showLogin() {
+export async function ShowLogin() {
   initGoogle();
   renderLoginUI();
 

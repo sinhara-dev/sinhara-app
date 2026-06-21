@@ -1,69 +1,21 @@
-import { showStatus } from "../utils/status.js";
-import { http } from "../services/http.js";
+const TOKEN_KEY = "jwt_auth_token";
 
-const TOKEN_KEY = "google_token";
+let currentUserToken = null;
 
-let currentUser = "UNKNOWN";
-
-export function setToken(token) {
+export function SetUserToken(token) {
   localStorage.setItem(TOKEN_KEY, token);
 }
 
-function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
+export function RemoveUserToken() {
+  localStorage.removeItem(TOKEN_KEY);
 }
 
-function parseJwt(token) {
-  try {
-    return JSON.parse(atob(token.split(".")[1]));
-  } catch {
-    return null;
-  }
+export function GetUserToken() {
+  if (currentUserToken) return currentUserToken;
+  currentUserToken = localStorage.getItem(TOKEN_KEY);
+  return currentUserToken;
 }
 
-async function isAuthorized(email) {
-  try {
-    const res = await http.Get("validateUser", {
-      email,
-    });
-    const response = await res.json();
-    if (!response.success) {
-      throw new Error(response.error || "Failed to validate user");
-    }
-
-    if (response.data) {
-      currentUser = email;
-      return true;
-    } else {
-      throw new Error("Access denied");
-    }
-  } catch (error) {
-    console.error(error);
-    showStatus(error.message, true);
-    return false;
-  }
-}
-
-export function getCurrentUser() {
-  return currentUser;
-}
-
-function getUser() {
-  const token = getToken();
-  if (!token) return null;
-
-  const payload = parseJwt(token);
-  return payload?.email ? payload : null;
-}
-
-export function userLoggedIn() {
-  return getUser() != null;
-}
-
-export async function checkAuth() {
-  // return true;
-  const user = getUser();
-  if (!user) return false;
-
-  return isAuthorized(user.email);
+export function UserLoggedIn() {
+  return GetUserToken() != null;
 }
