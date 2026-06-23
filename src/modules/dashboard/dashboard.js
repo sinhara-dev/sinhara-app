@@ -38,7 +38,7 @@ function setDashboardValues(data) {
 }
 
 async function getDashboardDataFromServer(year, month) {
-  const res = await http.Get("getDashboardData", {
+  const res = await http.Get("dashboard", {
     year,
     month,
   });

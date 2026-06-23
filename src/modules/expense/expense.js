@@ -54,7 +54,7 @@ async function submitExpense() {
   showStatusMessage("Creating new expense...");
 
   try {
-    const res = await http.Post("addExpense", {
+    const res = await http.Post("expense", {
       date,
       item,
       amount,
@@ -338,7 +338,7 @@ async function loadExpenseHeader(year, month) {
   setExpenseLoading();
 
   try {
-    const res = await http.Get("getExpenseSummary", { year, month });
+    const res = await http.Get("expense", { year, month });
 
     const response = await res.json();
 

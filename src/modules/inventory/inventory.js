@@ -281,7 +281,7 @@ async function submitSale(productId) {
   loader.style.display = "flex";
 
   try {
-    const res = await http.Post("recordSale", {
+    const res = await http.Post("sales", {
       productId,
       quantity,
       marketingTeam: marketingTeam,
@@ -321,7 +321,7 @@ async function submitStockUpdate(productId) {
   loader.style.display = "flex";
 
   try {
-    const res = await http.Post("updateInventoryStock", {
+    const res = await http.Post("stock", {
       productId,
       quantityToAdd: quantity,
     });
@@ -489,7 +489,7 @@ async function refreshProducts() {
   setSyncing(true);
 
   try {
-    const res = await http.Get("getInventoryProducts");
+    const res = await http.Get("products");
 
     const response = await res.json();
 
@@ -612,7 +612,7 @@ async function updateInventoryAddNewProduct() {
       reader.readAsDataURL(file);
     });
 
-    const res = await http.Post("addNewProduct", {
+    const res = await http.Post("product", {
       productName,
       amount,
       expense,

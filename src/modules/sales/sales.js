@@ -211,7 +211,7 @@ async function loadSalesData(year, month) {
   showSalesLoading();
 
   try {
-    const res = await http.Get("getSalesSummary", { year, month });
+    const res = await http.Get("sales", { year, month });
 
     const response = await res.json();
 

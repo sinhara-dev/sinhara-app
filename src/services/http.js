@@ -14,13 +14,14 @@ class HttpClient {
     if (IS_DEV) {
       url.searchParams.set("env", "dev");
     }
+
+    console.info("GET ", url.searchParams.toString());
+
     url.searchParams.set("token", GetUserToken());
 
     Object.entries(params).forEach(([key, value]) => {
       url.searchParams.set(key, value);
     });
-
-    console.info("GET ", url.searchParams.toString());
 
     return fetch(url, {
       method: "GET",
@@ -28,7 +29,9 @@ class HttpClient {
   }
 
   async Post(action, body = {}) {
-    console.info("POST ", action, " env: ", IS_DEV ? "dev" : "prod");
+    console.info(
+      `POST action=${action} body=${JSON.stringify(body)} env=${IS_DEV ? "dev" : ""}`,
+    );
     return fetch(BASE_URL, {
       method: "POST",
       body: JSON.stringify({
